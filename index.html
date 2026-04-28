@@ -1,0 +1,2467 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revozen — Base de Conocimiento</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0f1117;
+    --bg2: #161b25;
+    --bg3: #1c2333;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e8eaf0;
+    --text2: #8b92a5;
+    --text3: #555e72;
+    --green: #22C364;
+    --green-dim: rgba(34,195,100,0.12);
+    --blue: #7FC8FF;
+    --blue-dim: rgba(127,200,255,0.1);
+    --purple: #9B7BF7;
+    --purple-dim: rgba(155,123,247,0.1);
+    --orange: #F59E0B;
+    --orange-dim: rgba(245,158,11,0.1);
+    --red: #F87171;
+    --red-dim: rgba(248,113,113,0.1);
+    --radius: 10px;
+    --sidebar-w: 260px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    height: 100vh;
+    position: fixed;
+    top: 0; left: 0;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+
+  .sidebar-logo {
+    padding: 20px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-cube {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span { color: var(--green); }
+  .logo-ai {
+    font-size: 9px;
+    color: var(--green);
+    font-weight: 600;
+    vertical-align: super;
+    margin-left: 1px;
+  }
+
+  .sidebar-search {
+    margin: 10px 10px 6px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-size: 13px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: text;
+  }
+
+  .sidebar-nav {
+    flex: 1;
+    padding: 8px 0;
+    overflow-y: auto;
+  }
+
+  .nav-section {
+    padding: 14px 16px 4px;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    cursor: pointer;
+    border-radius: 0;
+    color: var(--text2);
+    font-size: 13px;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active {
+    background: var(--green-dim);
+    color: var(--green);
+    border-left: 2px solid var(--green);
+    font-weight: 500;
+  }
+
+  .nav-item .icon { font-size: 14px; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    background: var(--bg3);
+    color: var(--text3);
+    padding: 1px 6px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .nav-badge.new { background: var(--green-dim); color: var(--green); border-color: transparent; }
+
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topbar {
+    height: 52px;
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    background: rgba(15,17,23,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 50;
+  }
+
+  .breadcrumb {
+    font-size: 13px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb .sep { color: var(--text3); }
+  .breadcrumb .current { color: var(--text); font-weight: 500; }
+
+  .topbar-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn {
+    padding: 6px 14px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border2);
+    background: none;
+    color: var(--text2);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn:hover { background: var(--bg3); color: var(--text); }
+  .btn.primary { background: var(--green); color: #000; border-color: var(--green); font-weight: 600; }
+  .btn.primary:hover { opacity: 0.9; }
+
+  /* CONTENT */
+  .content {
+    padding: 40px 48px 80px;
+    max-width: 900px;
+  }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* PAGE HEADER */
+  .page-header {
+    margin-bottom: 32px;
+  }
+
+  .page-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .page-title {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.8px;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+
+  .page-desc {
+    font-size: 15px;
+    color: var(--text2);
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .page-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .meta-tag {
+    font-size: 12px;
+    color: var(--text3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* DIVIDER */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 28px 0;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+    transform: translateY(-1px);
+  }
+
+  .card-icon { font-size: 20px; margin-bottom: 8px; }
+  .card-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .card-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .card-footer {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-tag {
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 500;
+  }
+  .tag-green { background: var(--green-dim); color: var(--green); }
+  .tag-blue { background: var(--blue-dim); color: var(--blue); }
+  .tag-purple { background: var(--purple-dim); color: var(--purple); }
+  .tag-orange { background: var(--orange-dim); color: var(--orange); }
+  .tag-red { background: var(--red-dim); color: var(--red); }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 24px 0 12px;
+  }
+
+  /* CONTENT BLOCKS */
+  .block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+
+  .block-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .block-header:hover { background: rgba(255,255,255,0.02); }
+
+  .block-toggle {
+    font-size: 10px;
+    color: var(--text3);
+    transition: transform 0.2s;
+    flex-shrink: 0;
+  }
+  .block-toggle.open { transform: rotate(90deg); }
+
+  .block-title {
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .block-body {
+    padding: 0 16px 14px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .block-body.open { display: block; }
+
+  /* TEXT CONTENT */
+  .prose {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.8;
+    margin: 10px 0;
+  }
+
+  .prose strong { color: var(--text); font-weight: 600; }
+  .prose em { color: var(--text3); font-style: italic; }
+
+  .check-list { list-style: none; margin: 8px 0; }
+  .check-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    padding: 5px 0;
+    font-size: 13px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+  }
+  .check-list li:last-child { border-bottom: none; }
+
+  .check-box {
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid var(--border2);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-size: 10px;
+  }
+  .check-box.checked { background: var(--green); border-color: var(--green); color: #000; }
+
+  .code-block {
+    background: #0a0c11;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--green);
+    line-height: 1.7;
+    margin: 10px 0;
+    position: relative;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .copy-code {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border: 1px solid var(--border2);
+    border-radius: 5px;
+    background: none;
+    color: var(--text3);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .copy-code:hover { color: var(--text); background: var(--bg3); }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; margin: 10px 0; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text2);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* CALLOUT */
+  .callout {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .callout-green { background: var(--green-dim); border-left: 3px solid var(--green); }
+  .callout-blue { background: var(--blue-dim); border-left: 3px solid var(--blue); color: var(--blue); }
+  .callout-orange { background: var(--orange-dim); border-left: 3px solid var(--orange); }
+  .callout .callout-icon { font-size: 16px; flex-shrink: 0; }
+  .callout .callout-text { color: var(--text2); }
+  .callout-green .callout-text { color: #86efac; }
+
+  /* PROGRESS */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .progress-label { font-size: 12px; color: var(--text2); width: 120px; flex-shrink: 0; }
+  .progress-bar-wrap { flex: 1; background: var(--bg3); border-radius: 999px; height: 6px; }
+  .progress-bar { height: 100%; border-radius: 999px; background: var(--green); }
+  .progress-val { font-size: 12px; color: var(--text3); width: 36px; text-align: right; }
+
+  /* STAT CARDS */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .stat-card {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid var(--border);
+  }
+  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; }
+  .stat-val { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
+
+  /* HOME GRID */
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .home-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .home-card:hover { border-color: var(--border2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+  .home-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .home-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .home-card-title { font-size: 15px; font-weight: 600; }
+  .home-card-desc { font-size: 13px; color: var(--text2); line-height: 1.5; margin-bottom: 12px; }
+  .home-card-items { font-size: 12px; color: var(--text3); }
+  .home-card-items span { display: block; padding: 2px 0; }
+  .home-card-items span::before { content: "→ "; color: var(--green); }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 999px; }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <svg class="logo-cube" viewBox="0 0 32 32" fill="none">
+      <defs>
+        <linearGradient id="cb" x1=".5" x2=".5" y1="0" y2="1">
+          <stop offset="0" stop-color="#11161b"/>
+          <stop offset="1" stop-color="#717171"/>
+        </linearGradient>
+        <linearGradient id="ct" x1="1" x2="0" y1=".167" y2=".833">
+          <stop offset="0" stop-color="#0b2a4a"/>
+          <stop offset="1" stop-color="#22C364"/>
+        </linearGradient>
+      </defs>
+      <path d="M29.7 24L29.7 8L24.4 11.1L24.4 20.9L16 25.8L7.6 20.9L7.6 11.1L2.3 8L2.3 24L16 32Z" fill="url(#cb)"/>
+      <path d="M29.7 8L24.4 4.9L16 9.8L7.6 4.9L2.3 8L16 16Z" fill="url(#ct)"/>
+      <path d="M16 6.2L21.3 3.1L16 0L10.7 3.1Z" fill="#22C364"/>
+    </svg>
+    <div class="logo-text">revo<span>zen</span><sup class="logo-ai">.ai</sup></div>
+  </div>
+
+  <div class="sidebar-search">
+    <span>🔍</span> Buscar...
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section">Principal</div>
+    <div class="nav-item active" onclick="showPage('home')">
+      <span class="icon">🏠</span> Inicio
+    </div>
+
+    <div class="nav-section">Estrategia</div>
+    <div class="nav-item" onclick="showPage('posicionamiento')">
+      <span class="icon">🎯</span> Posicionamiento
+    </div>
+    <div class="nav-item" onclick="showPage('competencia')">
+      <span class="icon">🔍</span> Análisis competitivo
+      <span class="nav-badge">4</span>
+    </div>
+    <div class="nav-item" onclick="showPage('pricing')">
+      <span class="icon">💰</span> Modelo de pricing
+    </div>
+    <div class="nav-item" onclick="showPage('roadmap')">
+      <span class="icon">🗺️</span> Roadmap de crecimiento
+    </div>
+    <div class="nav-item" onclick="showPage('mercado')">
+      <span class="icon">📊</span> Análisis de mercado
+      <span class="nav-badge new">Chile</span>
+    </div>
+
+    <div class="nav-section">Producto</div>
+    <div class="nav-item" onclick="showPage('framework')">
+      <span class="icon">🤖</span> Framework de agentes
+    </div>
+    <div class="nav-item" onclick="showPage('stack')">
+      <span class="icon">⚙️</span> Stack técnico
+    </div>
+    <div class="nav-item" onclick="showPage('integraciones')">
+      <span class="icon">🔌</span> Integraciones MS365 y Google
+      <span class="nav-badge new">nuevo</span>
+    </div>
+    <div class="nav-item" onclick="showPage('inteligencia')">
+      <span class="icon">🧠</span> Inteligencia de datos
+      <span class="nav-badge new">nuevo</span>
+    </div>
+    <div class="nav-item" onclick="showPage('arquitectura')">
+      <span class="icon">🏗️</span> Arquitectura conceptual
+    </div>
+    <div class="nav-item" onclick="showPage('prompts')">
+      <span class="icon">💬</span> Plantillas de prompts
+    </div>
+    <div class="nav-item" onclick="showPage('casouso')">
+      <span class="icon">🔄</span> Caso de uso — Ciclo consultivo
+    </div>
+    <div class="nav-item" onclick="showPage('playbook')">
+      <span class="icon">📋</span> Playbook v1
+      <span class="nav-badge new">nuevo</span>
+    </div>
+
+    <div class="nav-section">Go-to-Market</div>
+    <div class="nav-item" onclick="showPage('plan90')">
+      <span class="icon">📅</span> Plan 90 días
+      <span class="nav-badge new">activo</span>
+    </div>
+    <div class="nav-item" onclick="showPage('copy')">
+      <span class="icon">✍️</span> Copy del sitio web
+    </div>
+    <div class="nav-item" onclick="showPage('ventas')">
+      <span class="icon">📧</span> Emails y propuesta
+    </div>
+
+    <div class="nav-section">Marca</div>
+    <div class="nav-item" onclick="showPage('marca')">
+      <span class="icon">🎨</span> Identidad visual
+    </div>
+    <div class="nav-item" onclick="showPage('framer')">
+      <span class="icon">🌐</span> Sitio en Framer
+    </div>
+
+    <div class="nav-section">Operaciones</div>
+    <div class="nav-item" onclick="showPage('clientes')">
+      <span class="icon">👥</span> Clientes y resultados
+    </div>
+    <div class="nav-item" onclick="showPage('aprendizajes')">
+      <span class="icon">📝</span> Aprendizajes
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="breadcrumb">
+      <span>Revozen</span>
+      <span class="sep">›</span>
+      <span class="current" id="breadcrumb-current">Inicio</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn">Exportar</button>
+      <button class="btn primary">+ Nueva nota</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- HOME -->
+    <div class="page active" id="page-home">
+      <div class="page-header">
+        <span class="page-icon">🚀</span>
+        <h1 class="page-title">Revozen — Base de Conocimiento</h1>
+        <p class="page-desc">Todo lo que necesitas para construir y escalar Revozen en un solo lugar. Organizado por temas, listo para ejecutar.</p>
+        <div class="page-meta">
+          <span class="meta-tag">📅 Iniciado: Abril 2026</span>
+          <span class="meta-tag">🌎 Mercado: LATAM B2B</span>
+          <span class="meta-tag">🎯 Fase: Validación</span>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-label">Clientes activos</div>
+          <div class="stat-val" style="color:var(--green)">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">MRR actual</div>
+          <div class="stat-val" style="color:var(--blue)">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Pipeline activo</div>
+          <div class="stat-val" style="color:var(--purple)">0</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Navegar por sección</div>
+      <div class="home-grid">
+        <div class="home-card" onclick="showPage('plan90')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:var(--green-dim)">📅</div>
+            <div class="home-card-title">Plan 90 días</div>
+          </div>
+          <div class="home-card-desc">Tu hoja de ruta semana a semana para los primeros 3 meses de Revozen.</div>
+          <div class="home-card-items">
+            <span>Semana 1–4: Fundamentos</span>
+            <span>Semana 5–8: Primeros clientes</span>
+            <span>Semana 9–12: Tracción</span>
+          </div>
+        </div>
+
+        <div class="home-card" onclick="showPage('framework')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:var(--blue-dim)">🤖</div>
+            <div class="home-card-title">Framework de agentes</div>
+          </div>
+          <div class="home-card-desc">Los 4 agentes del sistema Revenue Agentic AI para servicios financieros B2B.</div>
+          <div class="home-card-items">
+            <span>Agente 1: Captura y calificación</span>
+            <span>Agente 2: Seguimiento autónomo</span>
+            <span>Agente 3: Nurturing</span>
+          </div>
+        </div>
+
+        <div class="home-card" onclick="showPage('competencia')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:var(--purple-dim)">🔍</div>
+            <div class="home-card-title">Análisis competitivo</div>
+          </div>
+          <div class="home-card-desc">Vambe, 11x.ai, Artisan, Landbase — cómo se diferencia Revozen de cada uno.</div>
+          <div class="home-card-items">
+            <span>Vambe vs Revozen</span>
+            <span>Players globales</span>
+            <span>Ventana de oportunidad LATAM</span>
+          </div>
+        </div>
+
+        <div class="home-card" onclick="showPage('stack')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:var(--orange-dim)">⚙️</div>
+            <div class="home-card-title">Stack técnico</div>
+          </div>
+          <div class="home-card-desc">HubSpot + n8n + Claude API + WhatsApp. Guía paso a paso para Mac.</div>
+          <div class="home-card-items">
+            <span>Railway + n8n setup</span>
+            <span>HubSpot + propiedades custom</span>
+            <span>Claude API + prompts</span>
+          </div>
+        </div>
+
+        <div class="home-card" onclick="showPage('ventas')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:var(--red-dim)">📧</div>
+            <div class="home-card-title">Emails y propuesta</div>
+          </div>
+          <div class="home-card-desc">4 emails de ventas + propuesta ejecutiva + deck de 9 slides listos para usar.</div>
+          <div class="home-card-items">
+            <span>Email de primer contacto frío</span>
+            <span>Post-diagnóstico</span>
+            <span>Follow-up de propuesta</span>
+          </div>
+        </div>
+
+        <div class="home-card" onclick="showPage('marca')">
+          <div class="home-card-header">
+            <div class="home-card-icon" style="background:rgba(34,195,100,0.08)">🎨</div>
+            <div class="home-card-title">Identidad visual</div>
+          </div>
+          <div class="home-card-desc">Logos SVG dark y light, paleta de colores, tipografía y guía de uso.</div>
+          <div class="home-card-items">
+            <span>Logo dark: #22C364</span>
+            <span>Logo light: #374151 + #22C364</span>
+            <span>Acento alternativo: #7FC8FF</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Estado del plan 90 días</div>
+      <div class="progress-row"><span class="progress-label">Semana 1 — Web</span><div class="progress-bar-wrap"><div class="progress-bar" style="width:0%"></div></div><span class="progress-val">0%</span></div>
+      <div class="progress-row"><span class="progress-label">Semana 2 — LinkedIn</span><div class="progress-bar-wrap"><div class="progress-bar" style="width:0%"></div></div><span class="progress-val">0%</span></div>
+      <div class="progress-row"><span class="progress-label">Semana 3 — Stack</span><div class="progress-bar-wrap"><div class="progress-bar" style="width:0%"></div></div><span class="progress-val">0%</span></div>
+      <div class="progress-row"><span class="progress-label">Semana 4 — Ventas</span><div class="progress-bar-wrap"><div class="progress-bar" style="width:0%"></div></div><span class="progress-val">0%</span></div>
+    </div>
+
+    <!-- POSICIONAMIENTO -->
+    <div class="page" id="page-posicionamiento">
+      <div class="page-header">
+        <span class="page-icon">🎯</span>
+        <h1 class="page-title">Posicionamiento</h1>
+        <p class="page-desc">La identidad estratégica de Revozen — quién es, para quién y por qué.</p>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>Concepto central:</strong> Revenue Agentic AI para equipos comerciales B2B. No somos un chatbot. No somos automatización básica. Somos el sistema que hace que el funnel funcione de punta a punta.</span>
+      </div>
+
+      <div class="section-title">Definición de la categoría</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">¿Qué es Revenue Agentic AI?</span>
+        </div>
+        <div class="block-body">
+          <p class="prose">Agentes de inteligencia artificial que actúan, califican y convierten oportunidades de forma autónoma dentro del proceso comercial de una empresa B2B. A diferencia de la automatización tradicional (reglas fijas), los agentes de Revozen razonan, recuerdan el contexto y toman decisiones adaptativas en tiempo real.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Buyer persona principal</span>
+        </div>
+        <div class="block-body">
+          <div class="table-wrap">
+            <table>
+              <tr><th>Atributo</th><th>Detalle</th></tr>
+              <tr><td>Cargo</td><td>CRO, VP Sales, Gerente Comercial, CEO</td></tr>
+              <tr><td>Empresa</td><td>Mediana empresa B2B, 50–500 empleados</td></tr>
+              <tr><td>Industria</td><td>Servicios financieros, SaaS, logística, consultoría</td></tr>
+              <tr><td>Dolor principal</td><td>Seguimiento inconsistente del equipo comercial</td></tr>
+              <tr><td>Ciclo de venta</td><td>30+ días, proceso consultivo</td></tr>
+              <tr><td>Geografía</td><td>Chile, Colombia, México (fase 1)</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Taglines y copy clave</span>
+        </div>
+        <div class="block-body">
+          <div class="table-wrap">
+            <table>
+              <tr><th>Uso</th><th>ES</th><th>EN</th></tr>
+              <tr><td>Tagline de marca</td><td>Revenue Agentic AI.</td><td>Revenue Agentic AI.</td></tr>
+              <tr><td>Hero headline</td><td>Agentes de IA que trabajan tu funnel en tiempo real</td><td>AI agents that work your funnel in real time</td></tr>
+              <tr><td>Subheadline</td><td>Más ingresos desde tu demanda existente. Sin ampliar el equipo.</td><td>More revenue from your existing demand. No extra headcount.</td></tr>
+              <tr><td>Diferenciador clave</td><td>No somos un chatbot. No somos automatización básica.</td><td>Not a chatbot. Not basic automation.</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANÁLISIS COMPETITIVO -->
+    <div class="page" id="page-competencia">
+      <div class="page-header">
+        <span class="page-icon">🔍</span>
+        <h1 class="page-title">Análisis Competitivo</h1>
+        <p class="page-desc">Cómo se posiciona Revozen frente a los principales competidores en LATAM y a nivel global.</p>
+      </div>
+
+      <div class="section-title">Competidores principales</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Vambe.ai — Competidor regional directo</span>
+          <span class="card-tag tag-orange" style="margin-left:auto">LATAM</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Plataforma de automatización comercial para cualquier empresa. Responde leads, califica, agenda y atribuye conversiones. +1,500 clientes en LATAM.</p>
+          <p class="prose"><strong>Diferencia clave de Revozen:</strong> Vambe apunta al mercado masivo de cualquier tamaño. Revozen está diseñado exclusivamente para empresas B2B medianas con ciclos consultivos de 30+ días. No es el mismo buyer ni el mismo problema.</p>
+          <div class="callout callout-blue">
+            <span class="callout-icon">💬</span>
+            <span class="callout-text">"Vambe es ideal para responder más leads más rápido. Revozen es para empresas que ya tienen un proceso comercial estructurado y quieren que la IA opere dentro de ese proceso — no alrededor de él."</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">11x.ai — Referente global AI SDR</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Global</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Agentes Alice (outbound) y Jordan (inbound). Levantó $50M Serie B con a16z. Enfocado en volumen masivo de outreach para empresas tech en EE.UU.</p>
+          <p class="prose"><strong>Diferencia:</strong> 11x apunta a outbound masivo para tech startups anglosajones. Revozen apunta a convertir la demanda existente en B2B consultivo LATAM. Mercados distintos.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Artisan — "Stop Hiring Humans"</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Global</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> AI SDR "Ava" que automatiza >80% del trabajo de prospección outbound. YC-backed, fundada 2024.</p>
+          <p class="prose"><strong>Diferencia:</strong> Outbound masivo con alto volumen de emails. No maneja ciclos consultivos, nurturing de largo plazo ni integración profunda con CRM para seguimiento de propuestas.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Landbase — GTM Agentic AI</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Global</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Plataforma GTM con modelo GTM-1 Omni entrenado en 40M+ interacciones de ventas B2B. $30M Serie A. Reporta 4-7x más conversiones.</p>
+          <p class="prose"><strong>Diferencia:</strong> Mercado anglosajón, enfoque en SMB tech. Sin presencia ni foco en LATAM. Precio y complejidad fuera del alcance de mediana empresa latinoamericana.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">HubSpot Breeze AI — El competidor más importante (y más honesto de analizar)</div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Lectura honesta:</strong> HubSpot es una amenaza real para Revozen, no un competidor menor. Tiene 288,000+ clientes, $3.1B en revenue anual, un equipo de producto de clase mundial y recursos para mejorar sus agentes cada trimestre. Este análisis intenta ser justo — no vender la idea de que Revozen siempre gana. En varios escenarios, HubSpot es la mejor opción.</span>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Qué ofrece HubSpot Breeze AI hoy (abril 2026)</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Plataforma global</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Prospecting Agent:</strong> Gestiona el ciclo completo de prospección — identifica señales de compra, investiga cuentas, genera outreach personalizado. Early customers reportan 2x la tasa de respuesta vs. benchmark de industria.</p>
+          <p class="prose"><strong>Smart Deal Progression:</strong> Lanzado abril 2026. Analiza transcripciones de llamadas + historial completo del deal → sugiere actualizaciones del CRM, redacta email de follow-up y prioriza próximos pasos. Muy cercano a lo que hace el Agente 3 y 4 de Revozen.</p>
+          <p class="prose"><strong>Customer Agent:</strong> Resuelve el 65-70% de tickets de soporte automáticamente. No es ventas, pero reduce carga operativa significativamente.</p>
+          <p class="prose"><strong>Closing Agent:</strong> Disponible 24/7 para responder preguntas de producto y pricing durante el proceso de cierre.</p>
+          <p class="prose"><strong>Breeze Assistant:</strong> Asistente con memoria, búsqueda web y conexión a Google Workspace y Slack. Sabe el rol del usuario, sus clientes y su negocio.</p>
+          <p class="prose" style="margin-top:8px;color:#F87171"><strong>⚠️ Conclusión honesta:</strong> Lo que Revozen planea construir como "sofisticación futura", HubSpot ya lo tiene o lo está lanzando ahora. La brecha tecnológica se está cerrando rápido.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Donde HubSpot sí gana a Revozen — sin matices</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>1. Marca y confianza:</strong> HubSpot lleva 20 años en el mercado. Un CRO de empresa mediana conoce HubSpot — no conoce Revozen. La venta de confianza es infinitamente más difícil para una empresa nueva.</p>
+          <p class="prose"><strong>2. Ecosistema integrado:</strong> HubSpot tiene Marketing Hub, Sales Hub, Service Hub, Data Hub y Content Hub en una sola plataforma. Revozen solo cubre la capa de agentes de ventas. Si un cliente necesita el ecosistema completo, HubSpot gana sin discusión.</p>
+          <p class="prose"><strong>3. Velocidad de mejora del producto:</strong> HubSpot lanza 200+ features por evento (2 veces al año). Revozen es un equipo pequeño. La brecha de velocidad de innovación es real y difícil de cerrar.</p>
+          <p class="prose"><strong>4. Integraciones nativas:</strong> HubSpot tiene 1,500+ integraciones nativas. Revozen depende de n8n como middleware, lo que agrega complejidad técnica y puntos de falla.</p>
+          <p class="prose"><strong>5. Soporte y SLA:</strong> HubSpot tiene soporte 24/7 en español para LATAM. Revozen en fase 1 es básicamente el founder. Eso es un riesgo real para clientes que necesitan SLA garantizado.</p>
+          <p class="prose"><strong>6. Estabilidad y continuidad:</strong> Un cliente que invierte en HubSpot sabe que la plataforma va a existir en 5 años. Revozen, como startup en fase 1, no puede ofrecer esa garantía.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Donde Revozen tiene ventaja real — siendo honestos</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>1. Implementación funciona desde el día 1:</strong> HubSpot vende licencias. El cliente tiene que configurar todo — o pagar un partner $8,000–20,000 adicionales. Revozen entrega un sistema operativo en 3 semanas, sin que el cliente tenga que saber nada técnico. Esa fricción de implementación es real y costosa.</p>
+          <p class="prose"><strong>2. Agentes diseñados para el proceso específico del cliente:</strong> Los agentes Breeze de HubSpot son genéricos — funcionan para una agencia en Alemania y una inmobiliaria en Chile al mismo tiempo. Revozen configura los prompts, los flujos y los criterios de calificación para el proceso exacto del cliente. Eso no es menor en ciclos consultivos complejos.</p>
+          <p class="prose"><strong>3. Sin RevOps interno requerido:</strong> Para que Breeze funcione bien, necesitas un CRM limpio, automatizaciones bien configuradas y alguien que las mantenga. Ese perfil cuesta $1,000–3,000/mes en LATAM. Revozen reemplaza esa necesidad.</p>
+          <p class="prose"><strong>4. Costo total menor para equipos de 5–15 ejecutivos:</strong> Cuando calculas licencias + implementación + RevOps + Data Hub + Marketing Hub, el stack completo de HubSpot para mediana empresa cuesta $30,000–70,000 el primer año. Revozen, $25,000–40,000 todo incluido.</p>
+          <p class="prose"><strong>5. Sin compromiso anual:</strong> HubSpot Pro/Enterprise requiere contrato anual pagado por adelantado. Revozen es mensual. Para una empresa mediana que quiere probar antes de comprometerse, esa flexibilidad tiene valor real.</p>
+          <p class="prose"><strong>6. Foco total en el problema:</strong> Revozen hace una sola cosa — Revenue Agentic AI para B2B consultivo. HubSpot hace 50 cosas. En el nicho específico de ciclos de venta complejos con múltiples etapas, Revozen puede ir más profundo que HubSpot.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">El riesgo real que Revozen debe monitorear</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>HubSpot mejora sus agentes cada 6 meses.</strong> Smart Deal Progression (lanzado abril 2026) ya hace buena parte de lo que Agente 3 y 4 de Revozen prometen. Si HubSpot sigue mejorando a este ritmo, la ventana de diferenciación de Revozen basada en "funcionalidades que HubSpot no tiene" se cierra en 12–18 meses.</p>
+          <p class="prose"><strong>La defensa de largo plazo de Revozen no puede ser tecnológica.</strong> Tiene que ser: mejor implementación, más rápida, más barata, con más conocimiento del contexto B2B consultivo en LATAM. Eso es más difícil de copiar que una feature.</p>
+          <p class="prose"><strong>Dicho de otra forma:</strong> Revozen no gana por tener mejor tecnología que HubSpot — HubSpot siempre tendrá más recursos para mejorar su plataforma. Revozen gana por ser el experto que hace que la tecnología (incluyendo HubSpot) funcione de verdad para el cliente específico.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Análisis de costos comparativo — por tamaño de equipo</span>
+        </div>
+        <div class="block-body">
+          <div class="table-wrap">
+            <table>
+              <tr><th>Equipo comercial</th><th>HS Pro (licencia)</th><th>HS costo real año 1 c/impl.</th><th>Revozen año 1</th><th>Veredicto</th></tr>
+              <tr><td>3 ejecutivos</td><td>$300/mes</td><td>~$10,500–15,500</td><td>~$20,500</td><td><span class="card-tag tag-blue">HubSpot más económico</span></td></tr>
+              <tr><td>5 ejecutivos</td><td>$500/mes</td><td>~$31,100–38,100</td><td>~$27,000</td><td><span class="card-tag tag-green">Revozen comparable</span></td></tr>
+              <tr><td>8 ejecutivos</td><td>$800/mes</td><td>~$57,100–69,100</td><td>~$34,000</td><td><span class="card-tag tag-green">Revozen 2x más económico</span></td></tr>
+              <tr><td>12 ejecutivos</td><td>$1,200/mes</td><td>~$75,000–95,000</td><td>~$38,000</td><td><span class="card-tag tag-green">Revozen 2–3x más económico</span></td></tr>
+              <tr><td>15+ ejecutivos</td><td>$1,500/mes</td><td>~$91,700–147,500</td><td>~$41,000</td><td><span class="card-tag tag-green">Revozen 3x más económico</span></td></tr>
+            </table>
+          </div>
+          <p class="prose" style="margin-top:8px"><strong>Nota importante:</strong> El costo real de HubSpot incluye licencias + onboarding + partner implementación + RevOps interno + Data Hub. Las empresas raramente calculan esto completo al momento de decidir — lo descubren durante el año 1.</p>
+          <p class="prose" style="margin-top:6px;color:#F87171"><strong>Honestidad brutal:</strong> Para equipos de 3 ejecutivos o menos, HubSpot es más barato. Punto. No intentes vender Revozen a ese segmento como si fuera más conveniente económicamente — no lo es.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">¿Qué es RevOps? — Concepto clave para entender la diferencia</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>RevOps (Revenue Operations)</strong> es el rol o equipo que se encarga de que todas las herramientas, datos y procesos comerciales funcionen bien y estén alineados entre marketing, ventas y servicio al cliente.</p>
+          <p class="prose"><strong>En la práctica:</strong> mantiene el CRM limpio, configura automatizaciones, conecta herramientas entre sí, genera reportes de pipeline y ajusta los procesos cuando algo no funciona.</p>
+          <p class="prose"><strong>Analogía:</strong> Si el equipo comercial es el piloto, el RevOps es el mecánico y el controlador de tráfico al mismo tiempo. No vende — pero sin él, los que venden no pueden despegar.</p>
+          <p class="prose"><strong>Costo en LATAM:</strong> $1,000–3,000/mes dependiendo de experiencia y país. Es el costo oculto más grande de usar HubSpot sin apoyo externo.</p>
+          <p class="prose"><strong>Revozen como RevOps externo:</strong> Revozen reemplaza la necesidad de un RevOps interno especializado en Revenue Agentic AI. No es lo mismo que un RevOps general — está 100% focalizado en hacer que los agentes de ventas funcionen y mejoren continuamente.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Matriz de decisión — ¿HubSpot solo, Revozen, o los dos?</span>
+        </div>
+        <div class="block-body">
+          <div class="table-wrap">
+            <table>
+              <tr><th>Situación de la empresa</th><th>Recomendación honesta</th></tr>
+              <tr><td>Startup / &lt;3 ejecutivos / presupuesto &lt;$1,000/mes</td><td><span class="card-tag tag-blue">HubSpot Starter</span> — Revozen no aplica todavía.</td></tr>
+              <tr><td>3–5 ejecutivos, sin equipo técnico, quieren automatizar</td><td><span class="card-tag tag-green">Revozen sobre HS Starter</span> — Implementación en 3 semanas vs. meses.</td></tr>
+              <tr><td>5–10 ejecutivos, ciclo consultivo B2B, sin RevOps</td><td><span class="card-tag tag-green">Revozen — caso de uso ideal.</span> Costo comparable, sin riesgo de compromiso anual.</td></tr>
+              <tr><td>10–15 ejecutivos, ya tienen HS Pro funcionando</td><td><span class="card-tag tag-green">Revozen sobre HS existente</span> — Complemento, no reemplazo.</td></tr>
+              <tr><td>+15 ejecutivos, RevOps dedicado, presupuesto alto</td><td><span class="card-tag tag-purple">HS Enterprise + Revozen</span> — La combinación más poderosa.</td></tr>
+              <tr><td>Empresa con equipo técnico fuerte y RevOps dedicado</td><td><span class="card-tag tag-blue">HubSpot Enterprise solo</span> — Revozen no agrega suficiente valor adicional.</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💬</span>
+        <span class="callout-text"><strong>Frase de cierre honesta para reuniones de ventas:</strong> "HubSpot tiene agentes IA y son buenos. Si tienes el equipo técnico y el presupuesto para implementarlos correctamente, probablemente no me necesitas. Revozen conviene cuando quieres los resultados de la IA sin el costo y la complejidad de implementarla tú mismo — y cuando tu proceso de ventas es lo suficientemente específico como para que una solución genérica no sea suficiente."</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Dimensión</th><th>Vambe</th><th>11x / Artisan</th><th>Revozen</th></tr>
+          <tr><td>Mercado</td><td>LATAM masivo</td><td>EE.UU. / Europa tech</td><td>LATAM B2B mediana empresa</td></tr>
+          <tr><td>Segmento</td><td>Cualquier empresa</td><td>Startups tech</td><td>B2B consultivo 50-500 emp.</td></tr>
+          <tr><td>Ciclo de venta</td><td>Corto / transaccional</td><td>Corto / outbound masivo</td><td>30+ días, consultivo</td></tr>
+          <tr><td>Integración CRM</td><td>Básica</td><td>Media</td><td>Profunda (HubSpot nativo)</td></tr>
+          <tr><td>Nurturing largo plazo</td><td>No</td><td>No</td><td>Sí (Agente 3)</td></tr>
+          <tr><td>Seguimiento propuestas</td><td>No</td><td>No</td><td>Sí (Agente 4)</td></tr>
+          <tr><td>Estrategia + ejecución</td><td>No</td><td>No</td><td>Sí</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- PRICING -->
+    <div class="page" id="page-pricing">
+      <div class="page-header">
+        <span class="page-icon">💰</span>
+        <h1 class="page-title">Modelo de Pricing</h1>
+        <p class="page-desc">Estructura de precios recomendada por fase de crecimiento.</p>
+      </div>
+
+      <div class="section-title">Estructura base (Fase 1 — primeros 5 clientes)</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Componente</th><th>Monto</th><th>Incluye</th></tr>
+          <tr><td>Setup inicial</td><td>USD $2,500–5,000 (pago único)</td><td>Diseño del sistema, configuración de 4 agentes, integración HubSpot + WhatsApp + email, dashboard, capacitación</td></tr>
+          <tr><td>Retainer mensual</td><td>USD $1,500–2,500/mes</td><td>Operación del sistema, optimización continua, soporte, reporte mensual de impacto</td></tr>
+          <tr><td>Infraestructura (incluida)</td><td>~$110/mes</td><td>HubSpot Starter, n8n, Claude API, 360dialog, Cal.com</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">✅</span>
+        <span class="callout-text"><strong>Garantía recomendada:</strong> Si al cabo de 60 días el sistema no reduce el tiempo de primera respuesta a menos de 10 minutos, Revozen devuelve el primer mes de retainer.</span>
+      </div>
+
+      <div class="section-title">Evolución del pricing por fase</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Fase</th><th>Setup</th><th>Retainer</th><th>Target MRR</th></tr>
+          <tr><td>Fase 1 (clientes 1–5)</td><td>$2,500–3,500</td><td>$1,500–2,000/mes</td><td>$10–15K</td></tr>
+          <tr><td>Fase 2 (clientes 6–20)</td><td>$3,500–5,000</td><td>$2,000–3,000/mes</td><td>$40–80K</td></tr>
+          <tr><td>Fase 3 (20+ clientes)</td><td>$5,000–8,000</td><td>$3,000–5,000/mes</td><td>$150–300K</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="page" id="page-roadmap">
+      <div class="page-header">
+        <span class="page-icon">🗺️</span>
+        <h1 class="page-title">Roadmap de Crecimiento</h1>
+        <p class="page-desc">Las 4 fases de Revozen desde validación hasta plataforma LATAM.</p>
+      </div>
+      <div class="section-title">Fases de crecimiento</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Fase</th><th>Período</th><th>MRR objetivo</th><th>Clientes</th><th>Equipo</th></tr>
+          <tr><td>1 — Validación</td><td>Meses 1–6</td><td>$10–15K</td><td>4–6</td><td>Solo fundador</td></tr>
+          <tr><td>2 — Escala con equipo</td><td>Meses 7–18</td><td>$40–80K</td><td>20–35</td><td>3–5 personas</td></tr>
+          <tr><td>3 — Expansión regional</td><td>Meses 19–36</td><td>$150–300K</td><td>60–120</td><td>8–15 personas</td></tr>
+          <tr><td>4 — Plataforma LATAM</td><td>Año 3–5</td><td>$500K–1M</td><td>200+</td><td>20–50 personas</td></tr>
+        </table>
+      </div>
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Hito crítico Fase 1:</strong> Conseguir 2 casos de éxito con métricas reales antes de escalar. Sin eso, el crecimiento es frágil.</span>
+      </div>
+    </div>
+
+    <!-- FRAMEWORK -->
+    <div class="page" id="page-framework">
+      <div class="page-header">
+        <span class="page-icon">🤖</span>
+        <h1 class="page-title">Framework de Agentes</h1>
+        <p class="page-desc">Sistema de 4 agentes para servicios financieros / seguros B2B. Primer framework vertical de Revozen.</p>
+      </div>
+
+      <div class="section-title">Los 4 agentes del sistema</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>#</th><th>Agente</th><th>Activa cuando</th><th>Stack</th></tr>
+          <tr><td><span class="card-tag tag-blue">01</span></td><td><strong>Captura y calificación</strong></td><td>Nuevo lead entra al CRM</td><td>HubSpot + Claude API + WhatsApp/Email + Calendly</td></tr>
+          <tr><td><span class="card-tag tag-green">02</span></td><td><strong>Seguimiento autónomo</strong></td><td>Lead no responde en 24h</td><td>n8n scheduled + Claude API + 360dialog + Slack</td></tr>
+          <tr><td><span class="card-tag tag-orange">03</span></td><td><strong>Nurturing largo plazo</strong></td><td>Lead calificado, no listo aún</td><td>HubSpot sequences + Claude API + Email</td></tr>
+          <tr><td><span class="card-tag tag-purple">04</span></td><td><strong>Cierre y propuesta</strong></td><td>Reunión completada, sin propuesta en 48h</td><td>HubSpot pipeline + Slack alert + Email</td></tr>
+        </table>
+      </div>
+
+      <div class="section-title">Propiedades custom en HubSpot</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>revozen_score            → Number (0–100)
+revozen_agent_stage      → Text (captura / nurturing / cierre)
+revozen_last_agent_touch → Date
+revozen_response_status  → Text (respondió / silencio / rebotó)
+revozen_channel_preference → Text (whatsapp / email)</div>
+    </div>
+
+    <!-- STACK TÉCNICO -->
+    <div class="page" id="page-stack">
+      <div class="page-header">
+        <span class="page-icon">⚙️</span>
+        <h1 class="page-title">Stack Técnico</h1>
+        <p class="page-desc">HubSpot + n8n + Claude API + WhatsApp/Email. Costo ~$110/mes por cliente.</p>
+      </div>
+
+      <div class="section-title">Componentes del stack</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Capa</th><th>Herramienta</th><th>Rol</th><th>Costo/mes</th></tr>
+          <tr><td>CRM</td><td>HubSpot Starter</td><td>Base de datos del sistema</td><td>$20</td></tr>
+          <tr><td>Orquestador</td><td>n8n (Railway)</td><td>Lógica de flujos y triggers</td><td>$5</td></tr>
+          <tr><td>Inteligencia</td><td>Claude API (Sonnet)</td><td>Generación de mensajes</td><td>$15–30</td></tr>
+          <tr><td>WhatsApp</td><td>360dialog</td><td>Canal de mensajería</td><td>$49</td></tr>
+          <tr><td>Email</td><td>SendGrid</td><td>Canal de email</td><td>$0</td></tr>
+          <tr><td>Calendario</td><td>Cal.com</td><td>Agendamiento automático</td><td>$0</td></tr>
+          <tr><td><strong>Total</strong></td><td></td><td></td><td><strong>~$89–110</strong></td></tr>
+        </table>
+      </div>
+
+      <div class="section-title">Modelo del Agente 1 (6 nodos en n8n)</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>Nodo 1: HubSpot Trigger → Contact Created
+Nodo 2: Set → extraer nombre, empresa, email, teléfono
+Nodo 3: HTTP Request → Claude API (genera mensaje)
+Nodo 4: Set → extraer content[0].text
+Nodo 5: SendGrid → Send Email al lead
+Nodo 6: HubSpot → Update Contact (propiedades Revozen)</div>
+    </div>
+
+    <!-- PROMPTS -->
+    <div class="page" id="page-prompts">
+      <div class="page-header">
+        <span class="page-icon">💬</span>
+        <h1 class="page-title">Plantillas de Prompts</h1>
+        <p class="page-desc">Prompts listos para cada agente. Copiar y personalizar con el contexto del cliente.</p>
+      </div>
+
+      <div class="section-title">System prompt base — Agente de seguimiento</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>Eres un agente comercial de {{empresa_cliente}}.
+Tu rol es hacer seguimiento a prospectos B2B del sector {{industria}}.
+Tono: profesional, directo, cálido. Nunca insistente ni robótico.
+Contexto del lead: {{crm_context}}
+Historial de mensajes: {{conversation_history}}
+Objetivo: {{agent_goal}}
+
+Reglas:
+- Máximo 3 oraciones por mensaje
+- No uses emojis
+- No menciones que eres un agente de IA
+- Si el lead pregunta algo fuera de tu alcance, escala al ejecutivo</div>
+
+      <div class="section-title">Mensaje de bienvenida (WhatsApp)</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>Hola {{nombre}}, gracias por tu interés en {{empresa_cliente}}.
+
+Vi que estás en {{empresa_prospecto}} — trabajamos con empresas del sector financiero ayudándoles a convertir más oportunidades sin ampliar el equipo.
+
+¿Tienes 2 minutos para contarme qué está pasando hoy con tu proceso comercial?</div>
+
+      <div class="section-title">Seguimiento día 3 sin respuesta</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>{{nombre}}, te comparto algo que puede ser útil independiente de si trabajamos juntos.
+
+En el sector de {{industria}}, el 68% de los leads se pierde en la etapa de seguimiento — no porque el producto sea malo, sino porque el equipo no tiene tiempo de ser consistente.
+
+¿Ese es un problema que reconoces en tu proceso?</div>
+    </div>
+
+    <!-- PLAN 90 DÍAS -->
+    <div class="page" id="page-plan90">
+      <div class="page-header">
+        <span class="page-icon">📅</span>
+        <h1 class="page-title">Plan 90 Días</h1>
+        <p class="page-desc">Hoja de ruta semana a semana para los primeros 3 meses de Revozen.</p>
+      </div>
+
+      <div class="section-title">Mes 1 — Fundamentos</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Semana 1 — Sitio web + logo + dominio en vivo</span>
+          <span class="card-tag tag-green" style="margin-left:auto">~5 tareas</span>
+        </div>
+        <div class="block-body">
+          <ul class="check-list">
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Subir los logos SVG a Framer (dark y light)</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Pegar el copy revisado sección por sección en Agentix</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Conectar revozen.ai al dominio (DNS en Framer)</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Configurar Cal.com con el evento "Diagnóstico 45 min"</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Publicar el sitio en producción</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Semana 2 — LinkedIn + posicionamiento personal</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">~4 tareas</span>
+        </div>
+        <div class="block-body">
+          <ul class="check-list">
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Actualizar perfil LinkedIn con nuevo headline y banner</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Crear página de empresa Revozen en LinkedIn</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Publicar primer post de lanzamiento</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Identificar 20 prospectos ideales en LinkedIn</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Semana 3 — Stack técnico base</span>
+          <span class="card-tag tag-orange" style="margin-left:auto">~5 tareas</span>
+        </div>
+        <div class="block-body">
+          <ul class="check-list">
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Crear cuenta n8n en Railway ⚡ Hacer HOY</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Registrar en 360dialog (aprobación 3–5 días) ⚡ Hacer HOY</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Obtener Claude API key + cargar $20 créditos</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Crear cuenta HubSpot + pipeline + 5 propiedades custom</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Construir flujo Agente 1 en n8n (6 nodos)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Semana 4 — Primeros outreach</span>
+          <span class="card-tag tag-purple" style="margin-left:auto">~4 tareas</span>
+        </div>
+        <div class="block-body">
+          <ul class="check-list">
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Enviar 10 mensajes de primer contacto en LinkedIn</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Preparar demo en vivo de 20 minutos</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Contactar 5 personas de red directa para referidos</li>
+            <li><div class="check-box" onclick="toggleCheck(this)"></div> Publicar segundo post en LinkedIn (dato de industria)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Meta del mes 1:</strong> revozen.ai en vivo, 2–3 reuniones de diagnóstico agendadas, Agente 1 funcionando en sandbox, 10+ prospectos en pipeline.</span>
+      </div>
+    </div>
+
+    <!-- COPY SITIO -->
+    <div class="page" id="page-copy">
+      <div class="page-header">
+        <span class="page-icon">✍️</span>
+        <h1 class="page-title">Copy del Sitio Web</h1>
+        <p class="page-desc">Copy revisado para el template Agentix en Framer. ES/EN. Listo para copiar.</p>
+      </div>
+
+      <div class="section-title">Hero — Sección principal</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Elemento</th><th>Español</th><th>English</th></tr>
+          <tr><td>Badge</td><td>Revenue Agentic AI para B2B</td><td>Revenue Agentic AI for B2B</td></tr>
+          <tr><td>Headline</td><td>Agentes de IA que trabajan tu funnel en tiempo real</td><td>AI agents that work your funnel in real time</td></tr>
+          <tr><td>Subheadline</td><td>Más ingresos desde tu demanda existente. Sin ampliar el equipo.</td><td>More revenue from your existing demand. No extra headcount.</td></tr>
+          <tr><td>CTA primario</td><td>Obtén un diagnóstico gratuito</td><td>Get a free revenue audit</td></tr>
+          <tr><td>CTA secundario</td><td>Ver cómo funciona</td><td>See how it works</td></tr>
+        </table>
+      </div>
+
+      <div class="section-title">Diferenciador clave</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>ES: No somos un chatbot. No somos automatización básica. Somos Revenue Agentic AI.
+EN: We don't install chatbots. We build revenue systems.</div>
+
+      <div class="section-title">SEO / Metadata</div>
+      <div class="code-block"><button class="copy-code" onclick="navigator.clipboard.writeText(this.nextSibling.textContent)">Copiar</button>Title: Revozen — Revenue Agentic AI para B2B
+Description ES: Revozen implementa Revenue Agentic AI para empresas B2B en Latinoamérica. Aumenta tu conversión y genera más ingresos desde tu demanda existente.
+Description EN: Revozen deploys Revenue Agentic AI for B2B companies across Latin America.</div>
+    </div>
+
+    <!-- EMAILS Y PROPUESTA -->
+    <div class="page" id="page-ventas">
+      <div class="page-header">
+        <span class="page-icon">📧</span>
+        <h1 class="page-title">Emails y Propuesta</h1>
+        <p class="page-desc">4 emails del ciclo de ventas + estructura de propuesta ejecutiva lista para usar.</p>
+      </div>
+
+      <div class="section-title">Secuencia de emails</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>#</th><th>Email</th><th>Cuándo enviar</th><th>Asunto</th></tr>
+          <tr><td>1</td><td>Primer contacto frío</td><td>Día 1 — LinkedIn / email</td><td>¿Tu equipo hace seguimiento a todos sus leads hoy?</td></tr>
+          <tr><td>2</td><td>Follow-up sin respuesta</td><td>Día 4</td><td>Un dato que puede ser relevante para {{empresa}}</td></tr>
+          <tr><td>3</td><td>Post-diagnóstico</td><td>Mismo día de la reunión</td><td>Propuesta Revozen para {{empresa}} — Revenue Agentic AI</td></tr>
+          <tr><td>4</td><td>Follow-up propuesta</td><td>3 días sin respuesta</td><td>Re: Propuesta Revozen para {{empresa}}</td></tr>
+        </table>
+      </div>
+
+      <div class="section-title">Estructura de la propuesta ejecutiva</div>
+      <ul class="check-list">
+        <li><div class="check-box checked">✓</div> 1. Resumen ejecutivo (situación + solución)</li>
+        <li><div class="check-box checked">✓</div> 2. Situación actual y puntos de pérdida (datos del diagnóstico)</li>
+        <li><div class="check-box checked">✓</div> 3. Solución propuesta (4 agentes con detalle)</li>
+        <li><div class="check-box checked">✓</div> 4. Plan de implementación (3 semanas)</li>
+        <li><div class="check-box checked">✓</div> 5. Inversión (setup + retainer + garantía)</li>
+        <li><div class="check-box checked">✓</div> 6. Próximos pasos (4 acciones concretas)</li>
+      </ul>
+    </div>
+
+    <!-- MARCA -->
+    <div class="page" id="page-marca">
+      <div class="page-header">
+        <span class="page-icon">🎨</span>
+        <h1 class="page-title">Identidad Visual</h1>
+        <p class="page-desc">Logos, paleta de colores y guía de uso para Revozen.</p>
+      </div>
+
+      <div class="section-title">Paleta de colores</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Color</th><th>HEX</th><th>Uso</th></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#22C364;border-radius:3px;vertical-align:middle;margin-right:6px"></span>Verde principal</td><td>#22C364</td><td>Logo pico del cubo, "zen", ".ai" — versión verde</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#7FC8FF;border-radius:3px;vertical-align:middle;margin-right:6px"></span>Azul acento</td><td>#7FC8FF</td><td>Logo variante azul, hero dashboard, acentos en sitio</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#2E86C1;border-radius:3px;vertical-align:middle;margin-right:6px"></span>Azul oscuro</td><td>#2E86C1</td><td>"zen" y ".ai" en versión light mode</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#374151;border-radius:3px;vertical-align:middle;margin-right:6px"></span>Gris carbón</td><td>#374151</td><td>"revo" en versión light mode</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#F1F5F9;border-radius:3px;vertical-align:middle;margin-right:6px"></span>Blanco suave</td><td>#F1F5F9</td><td>"revo" en versión dark mode</td></tr>
+          <tr><td><span style="display:inline-block;width:14px;height:14px;background:#0D0D12;border-radius:3px;border:1px solid #333;vertical-align:middle;margin-right:6px"></span>Fondo oscuro</td><td>#0D0D12</td><td>Fondo principal dark mode del sitio</td></tr>
+        </table>
+      </div>
+
+      <div class="section-title">Archivos de logo disponibles</div>
+      <ul class="check-list">
+        <li><div class="check-box checked">✓</div> revozen-green-dark-v3.svg — Logo verde, fondo oscuro, con .ai superíndice</li>
+        <li><div class="check-box checked">✓</div> revozen-green-light-v3.svg — Logo verde, fondo blanco, con .ai superíndice</li>
+        <li><div class="check-box checked">✓</div> revozen-blue-dark-v1.svg — Logo azul #7FC8FF, fondo oscuro</li>
+        <li><div class="check-box checked">✓</div> revozen-blue-light-v2.svg — Logo azul, fondo blanco, zen en #2E86C1</li>
+      </ul>
+
+      <div class="section-title">Template del sitio</div>
+      <div class="callout callout-blue">
+        <span class="callout-icon">🌐</span>
+        <span class="callout-text"><strong>Template elegido:</strong> Agentix (agent.framer.wiki) — Dark mode, estructura de agencia/servicio, secciones How it works con pasos 01/02/03. Dominio: revozen.ai</span>
+      </div>
+    </div>
+
+    <!-- FRAMER -->
+    <div class="page" id="page-framer">
+      <div class="page-header">
+        <span class="page-icon">🌐</span>
+        <h1 class="page-title">Sitio en Framer</h1>
+        <p class="page-desc">Guía de implementación del sitio revozen.ai en el template Agentix.</p>
+      </div>
+
+      <div class="section-title">Checklist de implementación</div>
+      <ul class="check-list">
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Subir logos SVG dark y light a Assets → Images</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Reemplazar logo del header con revozen-green-dark-v3.svg</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Pegar copy del Hero (badge + headline + subheadline + CTAs)</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Reemplazar hero image con revozen-hero-blue.png</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Adaptar sección "How it works" con los 3 pasos de Revozen</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Eliminar sección de Pricing (reemplazar por CTA diagnóstico)</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Configurar Localization ES/EN (plan Pro)</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Conectar botón CTA a Cal.com</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Configurar SEO — Title + Description + OG image</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Conectar dominio revozen.ai</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Preview en mobile (390px) antes de publicar</li>
+        <li><div class="check-box" onclick="toggleCheck(this)"></div> Publicar ✅</li>
+      </ul>
+    </div>
+
+    <!-- CLIENTES -->
+    <div class="page" id="page-clientes">
+      <div class="page-header">
+        <span class="page-icon">👥</span>
+        <h1 class="page-title">Clientes y Resultados</h1>
+        <p class="page-desc">Registro de clientes activos, métricas de impacto y casos de éxito.</p>
+      </div>
+      <div class="callout callout-orange">
+        <span class="callout-icon">📋</span>
+        <span class="callout-text">Esta sección se completa con el primer cliente. Documenta aquí: nombre del cliente, industria, fecha de inicio, métricas antes/después, testimonial y lecciones aprendidas.</span>
+      </div>
+      <div class="section-title">Plantilla para cada cliente</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Campo</th><th>Valor</th></tr>
+          <tr><td>Empresa</td><td></td></tr>
+          <tr><td>Industria</td><td></td></tr>
+          <tr><td>Fecha de inicio</td><td></td></tr>
+          <tr><td>Ticket (setup + retainer)</td><td></td></tr>
+          <tr><td>Tiempo de respuesta antes</td><td></td></tr>
+          <tr><td>Tiempo de respuesta después</td><td></td></tr>
+          <tr><td>Leads atendidos por agente (mes 1)</td><td></td></tr>
+          <tr><td>Reuniones agendadas automáticamente</td><td></td></tr>
+          <tr><td>NPS del cliente</td><td></td></tr>
+          <tr><td>Testimonial</td><td></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- INTEGRACIONES MS365 Y GOOGLE -->
+    <div class="page" id="page-integraciones">
+      <div class="page-header">
+        <span class="page-icon">🔌</span>
+        <h1 class="page-title">Integraciones — MS365 y Google Workspace</h1>
+        <p class="page-desc">Cómo Revozen opera dentro del entorno tecnológico que ya usa el cliente. Nivel de integración, complejidad técnica y limitaciones honestas por plataforma.</p>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>Argumento de venta clave:</strong> El sistema se adapta al entorno que ya usa el cliente — no al revés. Revozen puede operar sobre MS365 o Google Workspace sin pedirle al cliente que cambie sus herramientas de trabajo.</span>
+      </div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Honestidad técnica:</strong> No todas las integraciones son igual de fáciles. Google Workspace es más simple de conectar. Microsoft 365 requiere más configuración técnica y potencialmente coordinación con el equipo de IT del cliente. Ambos son posibles — con distintos tiempos de implementación.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Estado de las integraciones en n8n (2026)</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Plataforma</th><th>Tipo de integración</th><th>Facilidad</th><th>Requiere IT del cliente</th></tr>
+          <tr><td><strong>Google Workspace (Gmail, Calendar, Drive, Sheets, Chat)</strong></td><td>Nodo nativo n8n — primera parte</td><td><span class="card-tag tag-green">Alta</span></td><td>No — solo OAuth del usuario</td></tr>
+          <tr><td><strong>Microsoft 365 (Outlook, Teams, OneDrive, Excel 365, SharePoint)</strong></td><td>Nodo nativo n8n + Microsoft Agent 365 (dic. 2025)</td><td><span class="card-tag tag-blue">Media</span></td><td>Sí — requiere Azure AD</td></tr>
+          <tr><td><strong>Microsoft Teams (alertas internas)</strong></td><td>Nodo nativo n8n</td><td><span class="card-tag tag-green">Alta</span></td><td>No — webhook de Teams</td></tr>
+          <tr><td><strong>Outlook (envío de email en nombre del ejecutivo)</strong></td><td>Microsoft Graph API via HTTP Request</td><td><span class="card-tag tag-orange">Media-baja</span></td><td>Sí — permisos Azure AD</td></tr>
+          <tr><td><strong>SharePoint / documentos Word</strong></td><td>Microsoft Graph API via HTTP Request</td><td><span class="card-tag tag-orange">Complejo</span></td><td>Sí — permisos IT requeridos</td></tr>
+          <tr><td><strong>Excel 365 (como CRM básico)</strong></td><td>Nodo nativo n8n Microsoft Excel 365</td><td><span class="card-tag tag-blue">Media</span></td><td>No — OAuth usuario</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Google Workspace — Lo que puedes hacer</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Gmail — Envío de emails en nombre del ejecutivo</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fácil</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> El agente envía emails desde la cuenta real del ejecutivo (ej. juan@empresa.cl) en lugar de desde una dirección genérica de SendGrid. El prospecto ve el email como si lo hubiera escrito el ejecutivo directamente.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> n8n → nodo Gmail → OAuth con la cuenta Google del ejecutivo. El ejecutivo autoriza el acceso una vez. Sin configuración de IT.</p>
+          <p class="prose"><strong>Ventaja para Revozen:</strong> Los emails del agente llegan desde una dirección conocida por el prospecto — mayor tasa de apertura y menor probabilidad de ir a spam vs. un dominio nuevo de SendGrid.</p>
+          <p class="prose"><strong>Limitación:</strong> Si el ejecutivo revoca el acceso OAuth, el flujo se rompe. Hay que monitorear que las credenciales estén activas.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Google Calendar — Agendamiento automático de reuniones</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fácil</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Cuando el lead agenda una reunión vía Cal.com, n8n crea automáticamente el evento en el Google Calendar del ejecutivo con el contexto del lead. Al completarse la reunión, el agente detecta el evento y activa el flujo post-reunión.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> Cal.com webhook → n8n → nodo Google Calendar. OAuth del ejecutivo. Sin IT.</p>
+          <p class="prose"><strong>Adicionalmente:</strong> El agente puede crear recordatorios automáticos en el calendario para los seguimientos que requieren intervención humana.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Google Sheets — CRM básico o complemento de HubSpot</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fácil</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Para clientes sin CRM, Google Sheets puede funcionar como base de datos de leads. El agente lee el estado de cada lead, actualiza la etapa y registra cada interacción automáticamente.</p>
+          <p class="prose"><strong>Limitación honesta:</strong> Sheets como CRM tiene límites reales — no tiene pipeline visual, no tiene scoring nativo, y la calidad de los datos depende de que el sheet esté bien estructurado. Es una solución de arranque para clientes que aún no tienen HubSpot — no un reemplazo permanente.</p>
+          <p class="prose"><strong>Cuándo usarlo:</strong> Como puente de implementación mientras el cliente adopta HubSpot. Permite arrancar en 1 semana sin esperar la configuración completa del CRM.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Google Chat — Alertas internas al ejecutivo</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fácil</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Reemplaza a Slack para las alertas internas del agente. Cuando el sistema detecta una señal de interés, una propuesta sin seguimiento o un lead de alto score, envía la alerta directamente al Google Chat del ejecutivo.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> n8n → Google Chat webhook. Configuración de 10 minutos. Sin IT.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Microsoft 365 — Lo que puedes hacer</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Microsoft Teams — Alertas internas al ejecutivo</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fácil</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Reemplaza a Slack para las alertas del agente. El sistema envía notificaciones al canal de Teams del ejecutivo cuando hay señales de interés, propuestas sin seguimiento o leads de alto score.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> n8n → nodo Microsoft Teams → webhook de Teams. No requiere Azure AD — solo el webhook URL que genera el propio Teams. Configuración de 5 minutos.</p>
+          <p class="prose"><strong>Esta es la integración MS365 más fácil de implementar.</strong> Ideal para empezar si el cliente usa Teams como canal principal de comunicación interna.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Outlook — Envío de emails en nombre del ejecutivo</span>
+          <span class="card-tag tag-orange" style="margin-left:auto">Requiere IT</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> El agente envía emails desde la cuenta real de Outlook del ejecutivo (ej. juan@empresa.cl). Igual que Gmail, pero en el ecosistema Microsoft.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> n8n → HTTP Request → Microsoft Graph API (endpoint /sendMail). Requiere registrar una aplicación en Azure AD con permisos Mail.Send. El equipo de IT del cliente debe aprobar esto.</p>
+          <p class="prose"><strong>Tiempo de implementación:</strong> 2–5 días hábiles dependiendo de la agilidad del equipo de IT. En empresas con políticas de seguridad estrictas (bancos, aseguradoras), puede tomar más tiempo.</p>
+          <p class="prose"><strong>Alternativa si IT demora:</strong> Usar SendGrid o Gmail como canal de email mientras se tramita el acceso a Outlook. El sistema sigue funcionando — solo el remitente es distinto.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Excel 365 — CRM básico o complemento de HubSpot</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Media</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Igual que Google Sheets — funciona como base de datos de leads para clientes sin CRM. El nodo nativo de Excel 365 en n8n lee y escribe en archivos almacenados en OneDrive.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> n8n → nodo Microsoft Excel 365 → OAuth del usuario. El archivo debe estar en OneDrive o SharePoint.</p>
+          <p class="prose"><strong>Limitación técnica conocida:</strong> Hay reportes de usuarios en la comunidad n8n (enero 2026) de problemas intermitentes con el nodo Excel 365 — el workbook a veces no carga correctamente. Hay que hacer pruebas antes de implementar en producción.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">SharePoint / Word — Lectura y generación de documentos</span>
+          <span class="card-tag tag-red" style="margin-left:auto">Complejo</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> El agente puede leer documentos de SharePoint (contratos, propuestas previas, especificaciones técnicas) para tener contexto al generar nuevos documentos. También puede crear documentos Word con las condiciones del deal acordadas.</p>
+          <p class="prose"><strong>Cómo se conecta:</strong> Microsoft Graph API vía HTTP Request en n8n. Requiere Azure AD con permisos Sites.ReadWrite.All. Necesita IT del cliente.</p>
+          <p class="prose"><strong>Evaluación honesta:</strong> Esta integración es técnicamente posible pero agrega complejidad significativa. Para los primeros clientes de Revozen, no es recomendable incluirla en el scope. Es una funcionalidad de fase 2–3 cuando el sistema base ya está estable.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Stack por ecosistema del cliente — reemplazos equivalentes</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Función en Revozen</th><th>Stack base</th><th>Si usa Google Workspace</th><th>Si usa MS 365</th></tr>
+          <tr><td>Email del agente al prospecto</td><td>SendGrid</td><td>Gmail del ejecutivo</td><td>Outlook (requiere IT) o SendGrid como fallback</td></tr>
+          <tr><td>Alertas internas al ejecutivo</td><td>Slack</td><td>Google Chat</td><td>Microsoft Teams (webhook — fácil)</td></tr>
+          <tr><td>Agendamiento de reuniones</td><td>Cal.com</td><td>Cal.com + Google Calendar</td><td>Cal.com + Outlook Calendar</td></tr>
+          <tr><td>Base de datos de leads (sin CRM)</td><td>HubSpot Starter</td><td>Google Sheets (temporal)</td><td>Excel 365 en OneDrive (temporal)</td></tr>
+          <tr><td>Documentos y propuestas</td><td>Google Docs / PDF</td><td>Google Drive</td><td>SharePoint / OneDrive (complejo)</td></tr>
+          <tr><td>CRM principal</td><td>HubSpot</td><td>HubSpot (se integra con ambos)</td><td>HubSpot (se integra con ambos)</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">🎯</span>
+        <span class="callout-text"><strong>Estrategia recomendada para implementación:</strong> Siempre usar HubSpot como CRM central independiente del ecosistema del cliente. Google Workspace y MS365 son los canales de comunicación y productividad — HubSpot es la memoria del sistema. Esa separación hace que el sistema sea más robusto y menos dependiente de las políticas de IT del cliente.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Power Automate — ¿Cuándo conviene en lugar de n8n?</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Empresas 100% Microsoft que rechazan herramientas externas</span>
+        </div>
+        <div class="block-body">
+          <p class="prose">Algunas empresas medianas con políticas de seguridad estrictas (especialmente bancos, aseguradoras, gobierno) no permiten conectar herramientas externas a su ecosistema Microsoft. En esos casos, n8n puede ser rechazado por IT.</p>
+          <p class="prose"><strong>Alternativa:</strong> Microsoft Power Automate es el orquestador nativo de MS365. Revozen puede implementar los flujos de los agentes sobre Power Automate en lugar de n8n — manteniendo la capa de Claude API para la generación de mensajes.</p>
+          <p class="prose"><strong>Limitación de Power Automate:</strong> Es más complejo de configurar para flujos avanzados, requiere licencias adicionales de Microsoft para automatizaciones premium, y tiene menos flexibilidad que n8n para lógica condicional compleja.</p>
+          <p class="prose"><strong>Cuándo usar Power Automate:</strong> Solo cuando el cliente explícitamente rechaza herramientas externas por política de seguridad. En todos los demás casos, n8n es superior en flexibilidad y costo.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTELIGENCIA DE DATOS -->
+    <div class="page" id="page-inteligencia">
+      <div class="page-header">
+        <span class="page-icon">🧠</span>
+        <h1 class="page-title">Inteligencia de Datos — Enriquecimiento y Research Autónomo</h1>
+        <p class="page-desc">Cómo el sistema captura conversaciones, enriquece perfiles con datos públicos y genera inteligencia comercial accionable en cada etapa del funnel.</p>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>La visión:</strong> Un agente que conoce al prospecto tan bien como el ejecutivo más preparado del equipo — y lo mantiene actualizado en tiempo real. Combina historial de conversaciones + datos públicos + señales de intención en un briefing accionable antes de cada interacción.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Los 3 flujos de inteligencia de datos</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Flujo</th><th>Qué captura</th><th>Cuándo actúa</th><th>Complejidad</th><th>Fase</th></tr>
+          <tr><td><strong>1. Enriquecimiento estático</strong></td><td>Cargo, empresa, LinkedIn, tecnología usada, email verificado</td><td>Al entrar el lead al CRM</td><td><span class="card-tag tag-green">Baja</span></td><td>Fase 1</td></tr>
+          <tr><td><strong>2. Captura de conversaciones</strong></td><td>Emails, WhatsApp, transcripciones de reuniones</td><td>Después de cada interacción</td><td><span class="card-tag tag-blue">Media</span></td><td>Fase 2</td></tr>
+          <tr><td><strong>3. Research autónomo dinámico</strong></td><td>Noticias, cambios de liderazgo, señales de intención, LinkedIn posts</td><td>Monitoreo continuo</td><td><span class="card-tag tag-orange">Alta</span></td><td>Fase 2–3</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Flujo 1 — Enriquecimiento estático al entrar el lead</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Qué hace Apollo.io en el stack de Revozen</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fase 1 — Implementar ya</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué es:</strong> Apollo.io es una base de datos de 275M+ contactos B2B con enriquecimiento automático. Cuando entra un nuevo lead con nombre y empresa, Apollo completa automáticamente: cargo exacto, email verificado, teléfono, LinkedIn, tecnología que usa la empresa, tamaño del equipo, industria, país y señales de intención de compra.</p>
+          <p class="prose"><strong>Cómo se integra en n8n:</strong> Nuevo contacto en HubSpot → n8n llama a Apollo API con email o nombre + empresa → Apollo devuelve el perfil enriquecido → n8n actualiza HubSpot con todos los campos → Claude genera el briefing inicial para el ejecutivo.</p>
+          <p class="prose"><strong>Resultado práctico:</strong> El ejecutivo abre el deal en HubSpot y ve: "Juan García, VP Comercial en ABC Seguros (180 empleados, usan Salesforce, interés detectado en automatización de ventas en últimos 30 días). Correo verificado. LinkedIn activo."</p>
+          <p class="prose"><strong>Costo:</strong> Plan básico Apollo $49/usuario/mes — incluye 30,000 créditos anuales. Para los primeros clientes de Revozen, el plan gratuito (100 créditos/mes) cubre pruebas iniciales.</p>
+          <p class="prose"><em>Limitación honesta: Apollo reporta 70-80% de éxito en emails B2B, menor en teléfonos móviles. Para LATAM específicamente, la cobertura de datos es menor que para EE.UU. y Europa — hay más gaps en perfiles de Chile, Colombia y México que en mercados anglosajones.</em></p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Clay como alternativa premium con waterfall enrichment</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Fase 2</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué es:</strong> Clay no tiene base de datos propia — conecta a 100+ fuentes (Clearbit, Hunter, Apollo, LinkedIn, People Data Labs y más) con lógica de waterfall: si una fuente no encuentra el dato, prueba la siguiente automáticamente. Reporta 95% de precisión en emails y 90% en teléfonos.</p>
+          <p class="prose"><strong>Claygent:</strong> El agente de research de Clay puede investigar señales específicas del negocio — expansiones recientes, cambios de liderazgo, lanzamientos de productos — de forma autónoma. Es lo más cercano a un research analyst automatizado disponible hoy.</p>
+          <p class="prose"><strong>Cuándo usar Clay sobre Apollo:</strong> Para perfiles de alto valor donde la precisión del dato importa más que la velocidad. Para ICP muy específico donde necesitas datos que Apollo no tiene. Para cuando el cliente tiene estrategia de outbound sofisticada.</p>
+          <p class="prose"><strong>Costo:</strong> Starter $149/mes. Pro $800/mes para volúmenes altos. Significativamente más caro que Apollo — para primeros clientes de Revozen no es prioridad.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Flujo 2 — Captura y procesamiento de conversaciones</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Emails — Interceptar, analizar y resumir con Claude</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Fase 2</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Cuando el prospecto responde un email, n8n lo intercepta via Gmail/Outlook, Claude analiza el contenido detectando: señales de interés, objeciones, compromisos adquiridos, preguntas sin responder, urgencia y tono general. Luego actualiza HubSpot con un resumen accionable y alerta al ejecutivo si detecta señal fuerte.</p>
+          <p class="prose"><strong>Ejemplo de output en HubSpot:</strong></p>
+          <p class="prose" style="font-family:monospace;background:var(--color-background-secondary);padding:10px;border-radius:8px;font-size:12px;line-height:1.8">
+            📧 Email recibido: 14 abril 2026<br>
+            🎯 Señal detectada: INTERÉS ALTO<br>
+            📋 Resumen: El prospecto confirmó que tienen presupuesto aprobado para Q2. Preguntó por integración con Salesforce. Mencionó que su CEO quiere ver una demo antes de decidir.<br>
+            ⚡ Acción sugerida: Incluir CEO en próxima reunión. Preparar slide de integración Salesforce.
+          </p>
+          <p class="prose"><strong>Limitación crítica:</strong> Interceptar emails de Outlook requiere permisos Azure AD del cliente. Gmail es más simple con OAuth. En ambos casos, hay que obtener consentimiento explícito del cliente antes de implementar — el sistema leerá las comunicaciones del ejecutivo.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Reuniones — Transcripción automática y extracción de contexto</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Fase 2</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Herramientas de transcripción compatibles:</strong> Fireflies.ai, Otter.ai, o el transcriptor nativo de Teams/Meet. Todas generan un texto de la reunión que n8n puede recibir vía webhook.</p>
+          <p class="prose"><strong>Flujo:</strong> Reunión termina → herramienta de transcripción genera texto → webhook a n8n → Claude procesa la transcripción y extrae: compromisos adquiridos por ambas partes, objeciones mencionadas, próximos pasos acordados, preguntas sin responder, señales de compra o rechazo → HubSpot se actualiza automáticamente → email de follow-up generado con los próximos pasos.</p>
+          <p class="prose"><strong>Resultado:</strong> El ejecutivo no tiene que escribir el resumen post-reunión — el agente lo hace y además lo convierte en acciones concretas en el CRM.</p>
+          <p class="prose"><em>Costo adicional: Fireflies plan Pro $10/usuario/mes. Otter.ai Business $20/usuario/mes. Teams y Google Meet tienen transcripción nativa gratuita en algunos planes.</em></p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">WhatsApp — Captura de conversaciones del canal principal</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">Fase 2</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> Cada mensaje de WhatsApp enviado y recibido por el agente se registra automáticamente en HubSpot vía 360dialog → n8n. Claude analiza el hilo completo periódicamente para actualizar el score del lead y detectar cambios en el nivel de interés.</p>
+          <p class="prose"><strong>Adicionalmente:</strong> Si el ejecutivo tiene conversaciones directas con el prospecto por WhatsApp personal (fuera del agente), puede reenviar la conversación a un número de WhatsApp de Revozen que la ingesta y procesa — manteniendo el contexto en HubSpot aunque la conversación haya sido humano-a-humano.</p>
+          <p class="prose"><em>Limitación: Las conversaciones de WhatsApp personal no se pueden interceptar automáticamente — requieren acción manual del ejecutivo para compartirlas con el sistema. La API de WhatsApp Business solo cubre el canal administrado por el agente.</em></p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Flujo 3 — Research autónomo de información pública</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Monitoreo de señales de la empresa del prospecto</span>
+          <span class="card-tag tag-orange" style="margin-left:auto">Fase 2–3</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué monitorea el agente:</strong> Noticias de la empresa en Google News, publicaciones recientes del contacto en LinkedIn, cambios de liderazgo (nuevo CEO, VP de Ventas contratado), rondas de financiamiento o expansiones, lanzamientos de productos o servicios nuevos, y menciones en medios relevantes de la industria.</p>
+          <p class="prose"><strong>Cómo se implementa en n8n:</strong> Scheduled trigger semanal → búsqueda en Google News API + LinkedIn (scraping vía Apify o Bright Data) → Claude filtra lo relevante comercialmente → si hay señal importante, alerta al ejecutivo con contexto accionable → HubSpot se actualiza con la nota.</p>
+          <p class="prose"><strong>Ejemplo de alerta:</strong></p>
+          <p class="prose" style="font-family:monospace;background:var(--color-background-secondary);padding:10px;border-radius:8px;font-size:12px;line-height:1.8">
+            🔔 Señal detectada — ABC Seguros<br>
+            📰 Noticia: ABC Seguros anunció expansión a mercado colombiano (El Mercurio, 12 abril)<br>
+            👤 LinkedIn: Juan García publicó hace 3 días sobre "digitalización del proceso comercial"<br>
+            💡 Sugerencia: Este es un buen momento para retomar contacto — la expansión probablemente implica necesidad de escalar el proceso comercial rápidamente.
+          </p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Briefing pre-reunión generado automáticamente</span>
+          <span class="card-tag tag-green" style="margin-left:auto">Fase 1 — Alto impacto</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué hace:</strong> 2 horas antes de cada reunión agendada en Cal.com, el agente genera automáticamente un briefing para el ejecutivo con: perfil del prospecto (Apollo), historial de la conversación (resumen de emails y WhatsApp), últimas noticias de la empresa, posts recientes de LinkedIn del contacto, y sugerencias de temas a abordar o preguntas a hacer.</p>
+          <p class="prose"><strong>Dónde llega:</strong> Email al ejecutivo + nota en el deal de HubSpot + mensaje en Slack/Teams.</p>
+          <p class="prose"><strong>Por qué es de alto impacto con bajo costo:</strong> Es una de las funcionalidades más visibles para el ejecutivo — antes de cada reunión recibe un documento que normalmente le tomaría 20–30 minutos preparar. El ROI percibido es inmediato.</p>
+          <p class="prose"><strong>Implementación:</strong> Cal.com webhook → n8n → Claude API (con contexto de Apollo + HubSpot + Google News) → email/Slack al ejecutivo. Complejidad media, impacto alto. Recomendado para fase 1 avanzada.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Consideraciones de privacidad y regulatorias — Chile</div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Este es el punto que más se ignora y más riesgo crea.</strong> En Chile aplica la Ley 19.628 de protección de datos personales, en proceso de actualización hacia un marco más estricto similar al GDPR europeo. No es un bloqueador — es un requisito de diseño que hay que incluir desde el inicio.</span>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Actividad</th><th>¿Requiere consentimiento?</th><th>Marco legal aplicable</th></tr>
+          <tr><td>Usar datos públicos de LinkedIn o noticias para enriquecer perfiles</td><td><span class="card-tag tag-green">No — datos públicos</span></td><td>Ley 19.628 Art. 4 — datos de acceso público</td></tr>
+          <tr><td>Usar Apollo/Clay para obtener emails y teléfonos</td><td><span class="card-tag tag-orange">Sí — consentimiento implícito B2B</span></td><td>Uso legítimo en contexto comercial B2B</td></tr>
+          <tr><td>Interceptar y procesar emails del ejecutivo</td><td><span class="card-tag tag-orange">Sí — consentimiento del ejecutivo</span></td><td>Requiere cláusula en contrato de servicio con cliente</td></tr>
+          <tr><td>Procesar conversaciones de reuniones (transcripción)</td><td><span class="card-tag tag-red">Sí — ambas partes</span></td><td>El prospecto debe saber que la reunión se transcribe</td></tr>
+          <tr><td>Almacenar historial de conversaciones en HubSpot</td><td><span class="card-tag tag-orange">Sí — política de privacidad</span></td><td>El cliente debe tener política de privacidad actualizada</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Hoja de ruta de implementación por fases</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Fase</th><th>Qué implementar</th><th>Impacto</th><th>Costo adicional/mes</th></tr>
+          <tr><td><strong>Fase 1</strong></td><td>Enriquecimiento con Apollo al entrar el lead + briefing pre-reunión</td><td><span class="card-tag tag-green">Alto — visible de inmediato</span></td><td>~$49 (Apollo básico)</td></tr>
+          <tr><td><strong>Fase 2A</strong></td><td>Captura y análisis de emails vía Gmail/Outlook</td><td><span class="card-tag tag-green">Alto</span></td><td>$0 adicional (usa Gmail/Outlook existente)</td></tr>
+          <tr><td><strong>Fase 2B</strong></td><td>Transcripción de reuniones con Fireflies + extracción de contexto</td><td><span class="card-tag tag-green">Alto</span></td><td>~$10–20/usuario</td></tr>
+          <tr><td><strong>Fase 2C</strong></td><td>Monitoreo semanal de noticias y LinkedIn del prospecto</td><td><span class="card-tag tag-blue">Medio</span></td><td>~$0 (Google News API gratuita, LinkedIn scraping variable)</td></tr>
+          <tr><td><strong>Fase 3</strong></td><td>Clay con waterfall enrichment + Claygent para research profundo</td><td><span class="card-tag tag-blue">Medio-alto</span></td><td>$149–800 (Clay)</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">🎯</span>
+        <span class="callout-text"><strong>La combinación que crea ventaja real:</strong> Enriquecimiento estático (Apollo) + captura de conversaciones (Gmail/n8n/Claude) + briefing pre-reunión automático = un ejecutivo que llega a cada interacción con más contexto que cualquier competidor. Eso no requiere tecnología sofisticada — requiere conectar bien las piezas que ya existen en el stack base de Revozen.</span>
+      </div>
+    </div>
+
+    <!-- ARQUITECTURA CONCEPTUAL -->
+    <div class="page" id="page-arquitectura">
+      <div class="page-header">
+        <span class="page-icon">🏗️</span>
+        <h1 class="page-title">Arquitectura Conceptual del Stack</h1>
+        <p class="page-desc">Qué estamos construyendo, por qué cada pieza existe y cómo se comunican entre sí. Nivel arquitectónico, sin código.</p>
+      </div>
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text">Lo que estás construyendo es un <strong>sistema de 4 capas</strong> donde cada herramienta tiene un rol específico. Piénsalo como una fábrica automatizada de seguimiento comercial: la fábrica corre sola, 24/7, sin que ningún humano tenga que recordar hacer seguimiento.</span>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Flujo completo del sistema</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Paso</th><th>Qué pasa</th><th>Herramienta</th></tr>
+          <tr><td>1</td><td>Un lead entra al sistema (formulario web, LinkedIn, referido)</td><td>HubSpot</td></tr>
+          <tr><td>2</td><td>HubSpot detecta el nuevo contacto y dispara una alerta a n8n</td><td>HubSpot → n8n</td></tr>
+          <tr><td>3</td><td>n8n recibe la alerta, lee los datos del lead y decide qué hacer</td><td>n8n</td></tr>
+          <tr><td>4</td><td>n8n le pasa el contexto a Claude y le pide generar un mensaje</td><td>n8n → Claude API</td></tr>
+          <tr><td>5</td><td>Claude genera un mensaje personalizado, tono correcto, en segundos</td><td>Claude API</td></tr>
+          <tr><td>6</td><td>n8n toma el mensaje y lo envía al lead por email o WhatsApp</td><td>SendGrid / 360dialog</td></tr>
+          <tr><td>7</td><td>HubSpot se actualiza: etapa, último contacto, status de respuesta</td><td>n8n → HubSpot</td></tr>
+          <tr><td>8</td><td>Si el lead responde con interés, el agente envía el link de calendario</td><td>Cal.com</td></tr>
+        </table>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Las 5 capas — qué hace cada una</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Capa 1 — HubSpot: la base de datos y memoria del sistema</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Rol:</strong> Almacena toda la información de leads y clientes. Es el "sistema de memoria" del agente — sin HubSpot el agente no sabe quién es el lead ni en qué etapa está.</p>
+          <p class="prose"><strong>Analogía:</strong> Es como el expediente de un paciente en un hospital. Cada médico (agente) que atiende al paciente lee el expediente antes de actuar y escribe lo que hizo al terminar.</p>
+          <p class="prose"><strong>En Revozen:</strong> Dispara la alerta cuando entra un nuevo lead → el agente lee los datos → al terminar escribe el resultado (mensaje enviado, etapa actualizada, score asignado).</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Capa 2 — n8n: el director de orquesta</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Rol:</strong> Conecta todas las piezas. Escucha HubSpot, decide qué hacer, llama a Claude, envía el mensaje y actualiza el CRM. Es el sistema nervioso del agente.</p>
+          <p class="prose"><strong>Analogía:</strong> Es como el gerente de una cocina de restaurant. No cocina él mismo — coordina: le dice al chef qué preparar (Claude), le dice al mesero qué llevar (email/WhatsApp) y actualiza la comanda (HubSpot).</p>
+          <p class="prose"><strong>Dónde corre:</strong> En Railway, en tu servidor propio. Costo: ~$5/mes.</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Capa 3 — Claude API: el cerebro que piensa y genera</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Rol:</strong> Genera los mensajes personalizados con el contexto del lead. Responde en español, tono correcto, sin sonar a robot.</p>
+          <p class="prose"><strong>Analogía:</strong> Es el redactor experto. El gerente (n8n) le dice "mensaje para Juan García de ABC Seguros, primer contacto, cálido, 3 oraciones" — y lo escribe en segundos.</p>
+          <p class="prose"><strong>Modelo activo:</strong> claude-sonnet-4-6 · Costo: ~$15-30 USD/mes para 500 mensajes · <strong>Estado: ✓ Activo y probado desde n8n.</strong></p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Capa 4 — SendGrid + 360dialog: los canales de entrega</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Rol:</strong> Canales por donde el agente entrega el mensaje. SendGrid maneja email desde @revozen.ai. 360dialog maneja WhatsApp Business API.</p>
+          <p class="prose"><strong>Estado:</strong> SendGrid — por configurar. 360dialog — registro enviado, aprobación de Meta pendiente (3-5 días hábiles).</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Capa 5 — Cal.com: el agendador automático</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Rol:</strong> Cuando el agente detecta interés en una reunión, incluye el link de Cal.com. El lead elige horario y queda agendado sin intervención humana.</p>
+          <p class="prose"><strong>Estado:</strong> Pendiente de configurar.</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="section-title">Estado actual del stack</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Componente</th><th>Estado</th><th>Próximo paso</th></tr>
+          <tr><td>Railway + n8n</td><td><span class="card-tag tag-green">✓ Activo</span></td><td>Conectar HubSpot</td></tr>
+          <tr><td>Claude API (claude-sonnet-4-6)</td><td><span class="card-tag tag-green">✓ Probado</span></td><td>Integrar al Agente 1 completo</td></tr>
+          <tr><td>HubSpot CRM</td><td><span class="card-tag tag-blue">Por configurar</span></td><td>Crear cuenta + pipeline + propiedades</td></tr>
+          <tr><td>SendGrid (email)</td><td><span class="card-tag tag-blue">Por configurar</span></td><td>Crear cuenta + verificar dominio</td></tr>
+          <tr><td>360dialog (WhatsApp)</td><td><span class="card-tag tag-orange">Esperando aprobación</span></td><td>Aguardar OK de Meta (3-5 días)</td></tr>
+          <tr><td>Cal.com (calendario)</td><td><span class="card-tag tag-purple">Pendiente</span></td><td>Crear cuenta + conectar calendario</td></tr>
+          <tr><td>Agente 1 completo</td><td><span class="card-tag tag-orange">35% avanzado</span></td><td>Agregar nodos Set + SendGrid + HubSpot update</td></tr>
+        </table>
+      </div>
+      <div class="callout callout-green">
+        <span class="callout-icon">🎯</span>
+        <span class="callout-text"><strong>Lo construido hoy:</strong> n8n corriendo en Railway + Claude API generando mensajes personalizados en segundos. Eso es el motor. Lo que falta (HubSpot, SendGrid, Cal.com) son los conectores que hacen que todo corra automáticamente.</span>
+      </div>
+    </div>
+
+    <!-- CASO DE USO: CICLO CONSULTIVO B2B -->
+    <div class="page" id="page-casouso">
+      <div class="page-header">
+        <span class="page-icon">🔄</span>
+        <h1 class="page-title">Caso de Uso — Ciclo de Venta Consultivo B2B</h1>
+        <p class="page-desc">Cómo Revenue Agentic AI asiste al Account Manager en cada una de las 10 etapas del ciclo de venta consultivo complejo.</p>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>Principio clave:</strong> En ninguna de las 10 etapas la IA reemplaza al Account Manager — en 8 de 10 lo asiste, en 2 actúa sola. El AM sigue siendo quien construye la relación, negocia y decide. La IA elimina el trabajo operativo repetitivo que consume el 40–60% del tiempo del ejecutivo.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Distribución del trabajo en el ciclo completo</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Tipo</th><th>Etapas</th><th>Descripción</th></tr>
+          <tr><td><span class="card-tag tag-green">IA actúa sola</span></td><td>2 de 10</td><td>Agendamiento y seguimiento de información pendiente del prospecto</td></tr>
+          <tr><td><span class="card-tag tag-blue">IA asiste al humano</span></td><td>8 de 10</td><td>Redacción, registro, alertas, resúmenes, borradores, seguimiento</td></tr>
+          <tr><td><span class="card-tag tag-orange">Solo humano</span></td><td>0 de 10</td><td>No hay etapa donde la IA no pueda agregar valor</td></tr>
+          <tr><td><span class="card-tag tag-purple">Reducción ciclo estimada</span></td><td>20–35%</td><td>Al eliminar esperas y trabajo operativo entre etapas</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Las 10 etapas del ciclo consultivo — detalle</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 1 — Primer contacto con el prospecto</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Account Manager identifica al prospecto y decide contactarlo. Relación inicial, primer mensaje personalizado.</p>
+          <p class="prose"><strong>IA hace:</strong> Sugiere el mejor mensaje de primer contacto basado en el perfil del prospecto. Registra el contacto en HubSpot automáticamente. Hace seguimiento si no hay respuesta en 48h.</p>
+          <p class="prose"><strong>Herramientas:</strong> n8n + Claude API + HubSpot + Email/WhatsApp</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 2 — Agendamiento de reunión</span>
+          <span class="card-tag tag-green" style="margin-left:auto">IA actúa sola</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Asiste a la reunión. El resto lo maneja el agente.</p>
+          <p class="prose"><strong>IA hace:</strong> Detecta cuando el prospecto acepta reunirse → envía link de Cal.com automáticamente → confirma la reunión → envía recordatorio 24h antes → prepara briefing del prospecto para el AM.</p>
+          <p class="prose"><strong>Herramientas:</strong> Cal.com + n8n + Claude API (genera briefing) + HubSpot</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 3 — Post-reunión: siguientes pasos y captura de información</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Conduce la reunión. Al terminar, dicta o escribe un resumen con los acuerdos y próximos pasos.</p>
+          <p class="prose"><strong>IA hace:</strong> Recibe el resumen → genera automáticamente: email de follow-up al prospecto con próximos pasos, lista de información requerida para la propuesta, alerta interna al AM con checklist de tareas, actualización del deal en HubSpot.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + n8n + HubSpot + Slack</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 4 — Seguimiento para recopilar información del prospecto</span>
+          <span class="card-tag tag-green" style="margin-left:auto">IA actúa sola</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Revisa y valida la información cuando llega.</p>
+          <p class="prose"><strong>IA hace:</strong> Monitorea qué información falta → envía recordatorios automáticos cada 2-3 días → personaliza cada recordatorio según qué falta específicamente → alerta al AM si el prospecto no responde en 7 días → registra todo en HubSpot.</p>
+          <p class="prose"><strong>Herramientas:</strong> n8n (scheduled trigger) + Claude API + HubSpot + Email/WhatsApp</p>
+          <p class="prose"><strong>💡 Este es uno de los puntos de mayor pérdida en el ciclo consultivo.</strong> El agente garantiza que ninguna solicitud de información quede sin seguimiento.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 5 — Coordinación interna para formular la propuesta</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> AM coordina con equipos internos (técnico, legal, pricing, operaciones). Toma decisiones estratégicas sobre la propuesta.</p>
+          <p class="prose"><strong>IA hace:</strong> Genera el brief interno con toda la info del prospecto → crea resumen ejecutivo del deal para el gerente → monitorea plazos internos → alerta si algún área no ha respondido en X días → centraliza info en HubSpot.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + Slack + HubSpot + n8n</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 6 — Presentación de propuesta y captura de feedback</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> AM presenta la propuesta. Conduce la conversación. Escucha el feedback.</p>
+          <p class="prose"><strong>IA hace:</strong> Antes: prepara el deck con la info del deal. Después: captura el feedback → categoriza objeciones → sugiere respuestas basadas en el perfil del cliente → actualiza HubSpot → programa seguimiento si no hay respuesta en 3 días.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + HubSpot + n8n + Email</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 7 — Propuesta ajustada</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Decide los ajustes estratégicos (pricing, alcance, condiciones). Aprueba la propuesta final.</p>
+          <p class="prose"><strong>IA hace:</strong> Genera borrador de propuesta ajustada incorporando el feedback → compara versión anterior vs. nueva → redacta el email de envío → monitorea si el prospecto la abre → alerta al AM con señales de interés.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + HubSpot + n8n + Email tracking</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 8 — Período de negociación</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> AM lidera la negociación. Toma decisiones sobre concesiones, pricing y condiciones. Esta etapa requiere juicio humano.</p>
+          <p class="prose"><strong>IA hace:</strong> Registra cada intercambio en HubSpot → genera resumen de posiciones de cada parte → alerta si la negociación lleva más de X días sin avance → sugiere argumentos basados en el historial del deal.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + HubSpot + n8n + Slack</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 9 — Caso de negocio y pricing final</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Valida el caso de negocio con el prospecto. Define el pricing final con aprobación de gerencia.</p>
+          <p class="prose"><strong>IA hace:</strong> Genera el documento de caso de negocio (ROI esperado, comparación vs. situación actual) → actualiza el forecast en HubSpot → notifica al gerente para aprobación → prepara el resumen ejecutivo para el comité de cierre.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + HubSpot + Slack + n8n</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Etapa 10 — Configuración de contrato y firma</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">IA asiste</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Humano hace:</strong> Legal revisa y aprueba el contrato. AM coordina la firma. Gerencia da el OK final.</p>
+          <p class="prose"><strong>IA hace:</strong> Genera borrador del contrato con las condiciones acordadas → monitorea el proceso de firma → alerta si lleva más de X días sin firmarse → al firmar, dispara automáticamente el proceso de onboarding → actualiza HubSpot a "Cerrado Ganado" → notifica a los equipos internos.</p>
+          <p class="prose"><strong>Herramientas:</strong> Claude API + DocuSign/PandaDoc + HubSpot + n8n + Slack</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Stack adicional requerido para este caso de uso</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Herramienta</th><th>Rol</th><th>Estado</th></tr>
+          <tr><td>DocuSign o PandaDoc</td><td>Firma digital de contratos (etapa 10)</td><td><span class="card-tag tag-blue">Por evaluar</span></td></tr>
+          <tr><td>Slack (alertas internas)</td><td>Notificaciones a equipos en etapas 3, 5, 8, 9, 10</td><td><span class="card-tag tag-blue">Por configurar</span></td></tr>
+          <tr><td>Email tracking</td><td>Detectar apertura de propuestas (etapas 6 y 7)</td><td><span class="card-tag tag-blue">Por configurar</span></td></tr>
+          <tr><td>Procesamiento de audio/texto</td><td>Capturar resumen de reuniones (etapa 3)</td><td><span class="card-tag tag-purple">Fase 2</span></td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">🎯</span>
+        <span class="callout-text"><strong>Hoja de ruta de implementación:</strong> El Agente 1 (captura y respuesta) ya está en construcción. Las etapas 2-4 son el siguiente nivel de sofisticación — se construyen sobre el mismo stack técnico (n8n + Claude + HubSpot) agregando complejidad progresiva. Las etapas 5-10 requieren integraciones adicionales (Slack, DocuSign) y son el nivel enterprise del sistema.</span>
+      </div>
+    </div>
+
+    <!-- PLAYBOOK V1 -->
+    <div class="page" id="page-playbook">
+      <div class="page-header">
+        <span class="page-icon">📋</span>
+        <h1 class="page-title">Playbook v1 — Arquitecturas, KPIs y Casos de Uso</h1>
+        <p class="page-desc">El conocimiento acumulado de Revozen sobre qué funciona, qué no, y cómo medir el impacto real. Documento vivo — se actualiza con cada cliente implementado.</p>
+      </div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Nota de uso honesta:</strong> Las métricas de referencia en v1 son estimaciones basadas en benchmarks de industria — no en casos de Revozen propios. A medida que se implementen clientes reales, cada sección debe actualizarse con datos reales. Un playbook con métricas inventadas destruye credibilidad más rápido que no tenerlo.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Los 4 niveles de KPIs — de más fácil a más difícil de demostrar</div>
+
+      <div class="table-wrap">
+        <table>
+          <tr><th>Nivel</th><th>KPI</th><th>Cuándo es visible</th><th>Dificultad de atribución</th></tr>
+          <tr><td><span class="card-tag tag-green">1 — Actividad</span></td><td>Tiempo de respuesta, % leads contactados, seguimientos ejecutados</td><td>Semana 1</td><td><span class="card-tag tag-green">Fácil</span> — el sistema lo registra directamente</td></tr>
+          <tr><td><span class="card-tag tag-blue">2 — Conversión</span></td><td>Lead→reunión, leads sin seguimiento, propuestas con seguimiento</td><td>Mes 1</td><td><span class="card-tag tag-blue">Medible</span> — requiere baseline previo</td></tr>
+          <tr><td><span class="card-tag tag-orange">3 — Eficiencia</span></td><td>Duración del ciclo, deals por ejecutivo, tiempo en tareas operativas</td><td>Mes 2–3</td><td><span class="card-tag tag-orange">Requiere tiempo</span> — ciclos completos necesarios</td></tr>
+          <tr><td><span class="card-tag tag-red">4 — Revenue</span></td><td>Revenue incremental atribuible, ROI del sistema</td><td>Mes 3–6</td><td><span class="card-tag tag-red">Difícil</span> — atribución causal es compleja</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Honestidad brutal sobre el KPI de mes 1:</strong> En un ciclo de venta consultivo de 30–45 días, es casi imposible atribuir revenue cerrado al sistema en mes 1. Los deals que cierran en mes 1 ya estaban avanzados antes de implementar. Lo que sí puedes medir con credibilidad en mes 1 es pipeline incremental generado — no revenue cerrado. Prometer revenue cerrado en mes 1 es quedar mal asegurado.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Fórmula de pipeline incremental — lo que sí puedes demostrar en mes 1</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Cómo calcular el pipeline incremental atribuible</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Fórmula:</strong></p>
+          <p class="prose" style="font-family:monospace;background:var(--color-background-secondary);padding:12px;border-radius:8px;line-height:2">
+            Pipeline incremental mes 1 =<br>
+            &nbsp;&nbsp;(Reuniones agendadas por agente × Ticket promedio × Tasa cierre histórica)<br>
+            &nbsp;&nbsp;- Costo mensual Revozen<br><br>
+            Ejemplo:<br>
+            &nbsp;&nbsp;12 reuniones × $15,000 ticket × 20% cierre = $36,000 pipeline<br>
+            &nbsp;&nbsp;- $2,000 retainer = <strong>$34,000 pipeline incremental neto</strong>
+          </p>
+          <p class="prose"><strong>Revenue atribuible mes 6:</strong></p>
+          <p class="prose" style="font-family:monospace;background:var(--color-background-secondary);padding:12px;border-radius:8px;line-height:2">
+            ROI Revozen 6 meses =<br>
+            &nbsp;&nbsp;Revenue deals originados por agente (meses 1–5)<br>
+            &nbsp;&nbsp;× Margen del cliente<br>
+            &nbsp;&nbsp;÷ Costo total Revozen (setup + 6 retainers)<br><br>
+            Ejemplo conservador:<br>
+            &nbsp;&nbsp;$120,000 revenue atribuible × 40% margen = $48,000<br>
+            &nbsp;&nbsp;÷ $17,000 costo Revozen = <strong>ROI 2.8x en 6 meses</strong>
+          </p>
+          <p class="prose"><em>Esta proyección solo es válida si el cliente registra correctamente el origen de cada deal en HubSpot desde el día 1 de implementación.</em></p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Protocolo de medición — antes, durante y después</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Momento</th><th>Acción</th><th>Métricas a capturar</th></tr>
+          <tr><td><strong>Semana 0 (antes)</strong></td><td>Diagnóstico y captura de baseline obligatorio</td><td>Tiempo de respuesta, % leads con seguimiento, tasa lead→reunión, tasa reunión→propuesta, duración ciclo, revenue por deal</td></tr>
+          <tr><td><strong>Semana 1–4 (mes 1)</strong></td><td>Reporte semanal simple</td><td>Leads respondidos &lt;5min, seguimientos ejecutados, reuniones agendadas por agente, leads sin actividad &gt;7 días, pipeline generado</td></tr>
+          <tr><td><strong>Mes 3</strong></td><td>Reporte de impacto + ajuste del sistema</td><td>Pipeline incremental, reducción ciclo (si hay datos), eficiencia ejecutivo, proyección mes 6, sección de qué NO funcionó</td></tr>
+          <tr><td><strong>Mes 6</strong></td><td>Revenue incremental atribuible</td><td>Revenue deals originados post-implementación, ROI calculado, comparación vs. mismo período año anterior</td></tr>
+        </table>
+      </div>
+
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Regla de oro:</strong> Sin baseline, no hay comparación. Si el cliente no tiene datos históricos confiables en el CRM, los primeros 60 días son la línea de base — se documenta explícitamente en el contrato y se alinean expectativas desde el inicio.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Las 3 arquitecturas de implementación</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Arquitectura 1 — Respuesta y calificación (más simple)</span>
+          <span class="card-tag tag-blue" style="margin-left:auto">50–300 leads/mes</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Para quién:</strong> Empresas con alto volumen de leads inbound y equipo pequeño. Ciclo de venta 7–30 días.</p>
+          <p class="prose"><strong>Agentes activos:</strong> Solo Agente 1 (captura y calificación).</p>
+          <p class="prose"><strong>KPI principal mes 1:</strong> % leads contactados en &lt;5 min + tasa lead→reunión.</p>
+          <p class="prose"><strong>Cuándo NO usar:</strong> Ciclo &gt;60 días y volumen &lt;30 leads/mes. El ROI no justifica la implementación.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Arquitectura 2 — Ciclo consultivo completo (caso principal Revozen)</span>
+          <span class="card-tag tag-green" style="margin-left:auto">20–150 leads/mes</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Para quién:</strong> B2B con ciclo 30–90 días, 3–15 ejecutivos, sin RevOps interno.</p>
+          <p class="prose"><strong>Agentes activos:</strong> Los 4 agentes del framework.</p>
+          <p class="prose"><strong>KPI mes 1:</strong> 0% leads sin seguimiento + reuniones agendadas por agente.</p>
+          <p class="prose"><strong>KPI mes 3:</strong> Pipeline incremental + reducción del ciclo.</p>
+          <p class="prose"><strong>KPI mes 6:</strong> Revenue atribuible / ROI calculado.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Arquitectura 3 — Reactivación de pipeline frío (alto ROI, bajo esfuerzo)</span>
+          <span class="card-tag tag-purple" style="margin-left:auto">500+ leads históricos</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Para quién:</strong> Empresas con base histórica de leads sin cerrar en CRM.</p>
+          <p class="prose"><strong>Por qué tiene alto ROI:</strong> El costo de adquisición del lead ya fue pagado. Reactivar un 3–8% tiene costo marginal casi cero.</p>
+          <p class="prose"><strong>Argumento de venta:</strong> "Tienes 800 leads en tu CRM que pagaste para adquirir y nunca cerraste. En mes 1 podemos reactivar entre 24 y 64. Si cierras 5 a tu ticket promedio, el ROI está justificado antes de terminar el mes."</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Los 5 errores más comunes — qué NO funciona</div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Error 1 — Implementar sin baseline limpio</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué pasa:</strong> El cliente no puede demostrar ROI internamente. Churn al mes 3–4 aunque el sistema funcione.</p>
+          <p class="prose"><strong>Corrección:</strong> Semana 0 es obligatoria. Si no hay datos, los primeros 60 días son la base — se documenta en el contrato.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Error 2 — Prompts genéricos que suenan a bot</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué pasa:</strong> Tasa de respuesta baja. El prospecto ignora los mensajes.</p>
+          <p class="prose"><strong>Corrección:</strong> El prompt de cada cliente debe incluir ejemplos reales de cómo el AM escribe, jerga de la industria y casos de uso específicos. Requiere 2–3 iteraciones con el equipo comercial real.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Error 3 — Automatizar un proceso comercial roto</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué pasa:</strong> La automatización amplifica el desorden. Resultados peores que antes.</p>
+          <p class="prose"><strong>Corrección:</strong> Si el pipeline no está estructurado, la semana 1 es de ordenamiento del CRM — no de implementación de agentes. Revozen no puede hacer funcionar algo que no funciona sin IA.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Error 4 — El equipo comercial no adopta el sistema</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué pasa:</strong> Los ejecutivos perciben el agente como amenaza. No actualizan el CRM. El sistema funciona técnicamente pero el equipo lo evita.</p>
+          <p class="prose"><strong>Corrección:</strong> La capacitación debe ser co-diseñada con el líder comercial. El mensaje: "el agente te da más tiempo para lo que solo tú puedes hacer." Es un problema de gestión del cambio, no de tecnología.</p>
+        </div>
+      </div>
+
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Error 5 — Sobre-automatizar en ciclos de alto valor</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Qué pasa:</strong> En deals con tickets &gt;$100,000 USD, el agente daña la relación antes de que comience.</p>
+          <p class="prose"><strong>Corrección:</strong> En deals de alto valor, el agente no se comunica directamente con el prospecto. Su rol es preparar al ejecutivo — briefing, alertas internas, señales de interés. El humano es el único que se comunica con el cliente.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Señales de alerta — cuándo el sistema no está funcionando</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Señal</th><th>Causa probable</th><th>Acción</th></tr>
+          <tr><td>Tasa de respuesta a mensajes del agente &lt;5%</td><td>Prompts genéricos o canal equivocado</td><td>Rediseñar prompt + probar canal alternativo</td></tr>
+          <tr><td>Reuniones agendadas sin avanzar en funnel</td><td>Calificación deficiente — leads de baja calidad</td><td>Ajustar criterios de calificación BANT</td></tr>
+          <tr><td>El ejecutivo no actualiza el CRM</td><td>Resistencia / problema de adopción</td><td>Sesión de realineación con líder comercial</td></tr>
+          <tr><td>Leads reciben mensajes fuera de contexto</td><td>Triggers mal configurados en n8n</td><td>Auditoría técnica del flujo</td></tr>
+          <tr><td>Cliente no puede medir ROI al mes 3</td><td>Baseline no capturado en semana 0</td><td>Redefinir período + acordar nuevas métricas</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- APRENDIZAJES -->
+    <div class="page" id="page-aprendizajes">
+      <div class="page-header">
+        <span class="page-icon">📝</span>
+        <h1 class="page-title">Aprendizajes</h1>
+        <p class="page-desc">Lo que funciona, lo que no, y cómo mejorar el sistema con cada cliente.</p>
+      </div>
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text">Documenta aquí los aprendizajes de cada implementación. Esta sección se convierte en el playbook v2, v3, etc. — y eventualmente en lo que le pasas al primer implementador técnico que contrates.</span>
+      </div>
+      <div class="section-title">Formato sugerido por aprendizaje</div>
+      <div class="code-block">Fecha: 
+Cliente: 
+Contexto: 
+Lo que hice: 
+Lo que pasó: 
+Lo que cambiaría: 
+Aplica a: (prompts / flujo n8n / proceso de ventas / onboarding)</div>
+    </div>
+
+    <!-- ANÁLISIS DE MERCADO -->
+    <div class="page" id="page-mercado">
+      <div class="page-header">
+        <span class="page-icon">📊</span>
+        <h1 class="page-title">Análisis de Mercado — Chile</h1>
+        <p class="page-desc">Estimación de TAM, SAM y SOM para Revozen en el mercado chileno. Cruzado con adopción de HubSpot y verticalización por industria.</p>
+        <div class="page-meta">
+          <span class="meta-tag">📅 Fuente: SII / ELE-7 Ministerio de Economía 2024</span>
+          <span class="meta-tag">🌎 Mercado: Chile (fase 1)</span>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-label">TAM — Empresas medianas Chile</div>
+          <div class="stat-val" style="color:var(--blue)">~29,800</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">TAM Revozen — B2B consultivo</div>
+          <div class="stat-val" style="color:var(--green)">~8,200</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">SAM — Con CRM activo</div>
+          <div class="stat-val" style="color:var(--purple)">~2,460</div>
+        </div>
+      </div>
+
+      <div class="callout callout-green">
+        <span class="callout-icon">💡</span>
+        <span class="callout-text"><strong>Conclusión clave:</strong> Con solo el 3% del SAM chileno (~80 clientes), Revozen alcanza $2–3.6M ARR. El mercado chileno solo justifica plenamente el negocio antes de expandirse a Colombia o México.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Embudo TAM → SAM → SOM</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Nivel</th><th>Definición</th><th>Empresas</th><th>Criterio de filtro</th></tr>
+          <tr><td><strong>TAM total</strong></td><td>Todas las empresas medianas de Chile</td><td>~29,800</td><td>SII: ventas 25,000–100,000 UF/año (fuente ELE-7 2024)</td></tr>
+          <tr><td><strong>TAM Revozen</strong></td><td>Medianas B2B con ciclo consultivo</td><td>~8,200</td><td>Verticales P1+P2 con equipo comercial estructurado</td></tr>
+          <tr><td><strong>SAM</strong></td><td>Con CRM activo (cualquier plataforma)</td><td>~2,460</td><td>~30% penetración CRM en medianas B2B Chile</td></tr>
+          <tr><td><strong>SAM HubSpot</strong></td><td>Solo empresas con HubSpot</td><td>~650</td><td>~25–30% de las empresas con CRM usan HubSpot</td></tr>
+          <tr><td><strong>SOM año 3</strong></td><td>Alcanzable con go-to-market focalizado</td><td>~200</td><td>~10% del SAM en 3 años</td></tr>
+          <tr><td><strong>Meta año 1</strong></td><td>Validación — clientes fundadores</td><td>4–6</td><td>Red directa + referidos</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Mercado por industria — Priorización Revozen</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Vertical</th><th>Est. medianas B2B</th><th>Fit</th><th>Prioridad</th><th>Razón</th></tr>
+          <tr><td><strong>Servicios financieros y seguros</strong></td><td>~1,200</td><td><span class="card-tag tag-green">Alto</span></td><td><span class="card-tag tag-green">⭐ P1</span></td><td>Ciclo consultivo largo, alto ticket, seguimiento crítico</td></tr>
+          <tr><td><strong>Tecnología / SaaS B2B</strong></td><td>~900</td><td><span class="card-tag tag-green">Alto</span></td><td><span class="card-tag tag-green">⭐ P1</span></td><td>Ya usan CRM, cultura digital, fácil integración técnica</td></tr>
+          <tr><td><strong>Consultoría y servicios profesionales</strong></td><td>~1,400</td><td><span class="card-tag tag-green">Alto</span></td><td><span class="card-tag tag-green">⭐ P1</span></td><td>Venta 100% consultiva, propuestas personalizadas</td></tr>
+          <tr><td><strong>Logística y transporte B2B</strong></td><td>~800</td><td><span class="card-tag tag-blue">Medio-alto</span></td><td><span class="card-tag tag-blue">P2</span></td><td>Clientes corporativos, renovación de contratos frecuente</td></tr>
+
+          <tr><td><strong>Construcción e ingeniería</strong></td><td>~1,100</td><td><span class="card-tag tag-blue">Medio-alto</span></td><td><span class="card-tag tag-blue">P2</span></td><td>Licitaciones y propuestas complejas, ciclo largo</td></tr>
+          <tr><td><strong>Salud privada corporativa</strong></td><td>~600</td><td><span class="card-tag tag-blue">Medio-alto</span></td><td><span class="card-tag tag-blue">P2</span></td><td>Leads de alto valor (convenios empresariales)</td></tr>
+          <tr><td><strong>Educación superior y corporativa</strong></td><td>~400</td><td><span class="card-tag tag-purple">Medio</span></td><td><span class="card-tag tag-purple">P3</span></td><td>Ciclos de matrícula intensos, ventanas cortas</td></tr>
+          <tr><td><strong>Manufactura e industria</strong></td><td>~1,100</td><td><span class="card-tag tag-orange">Medio-bajo</span></td><td><span class="card-tag tag-orange">P4</span></td><td>Venta más técnica, menor frecuencia de leads inbound</td></tr>
+          <tr style="background:var(--bg2)"><td><strong>Total foco P1+P2</strong></td><td><strong>~6,000</strong></td><td><span class="card-tag tag-green">Alto/Medio-alto</span></td><td><span class="card-tag tag-green">Foco inicial</span></td><td>Mejor fit para Revenue Agentic AI fase 1 y 2</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Revenue potencial en Chile</div>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Fase</th><th>Clientes</th><th>Retainer promedio</th><th>MRR</th><th>ARR</th><th>% del SAM</th></tr>
+          <tr><td>Año 1 — Validación</td><td>4–6</td><td>$1,800/mes</td><td>$7–11K</td><td>$86–130K</td><td>0.06%</td></tr>
+          <tr><td>Año 2 — Escala</td><td>20–35</td><td>$2,500/mes</td><td>$50–88K</td><td>$600K–1M</td><td>1.2%</td></tr>
+          <tr><td>Año 3 — Consolidación</td><td>60–100</td><td>$3,000/mes</td><td>$180–300K</td><td>$2.2–3.6M</td><td>3.3%</td></tr>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Contexto HubSpot y adopción digital en Chile</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Chile lidera adopción de IA en LATAM</span>
+        </div>
+        <div class="block-body">
+          <p class="prose">Chile ocupa el primer lugar de LATAM en el Índice Latinoamericano de IA 2024 con <strong>73 puntos sobre 100</strong>, por encima de Brasil (69) y Uruguay (65). Aprobó su Ley de IA en octubre de 2025, siendo pionero regulatorio regional. Esto implica una base de empresas medianas más propensas a adoptar soluciones avanzadas como Revenue Agentic AI vs. otros mercados de LATAM.</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Penetración CRM en Chile — estimaciones</span>
+        </div>
+        <div class="block-body">
+          <div class="table-wrap">
+            <table>
+              <tr><th>Escenario</th><th>% con CRM</th><th>Empresas</th><th>% con HubSpot</th><th>Con HubSpot</th></tr>
+              <tr><td>Conservador</td><td>20%</td><td>~1,640</td><td>25%</td><td>~410</td></tr>
+              <tr><td>Base (más probable)</td><td>30%</td><td>~2,460</td><td>25–30%</td><td>~650</td></tr>
+              <tr><td>Optimista</td><td>45%</td><td>~3,690</td><td>30%</td><td>~1,100</td></tr>
+            </table>
+          </div>
+          <p class="prose" style="margin-top:10px">Revozen puede operar con cualquier CRM — HubSpot, Salesforce, Pipedrive, Zoho. El SAM ampliado con cualquier CRM (~30% penetración) es de ~2,460 empresas. El SAM potencial si Revozen implementa el stack desde cero sube a ~5,740 empresas adicionales.</p>
+        </div>
+      </div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">Desconexión marketing-ventas: el problema que valida Revozen</span>
+        </div>
+        <div class="block-body">
+          <p class="prose">HubSpot analizó 3,000 llamadas reales de asesoría con empresas de Chile, México, Colombia y Argentina en 2025. El resultado: la <strong>desconexión entre marketing y ventas es el principal freno al crecimiento empresarial en LATAM</strong>. Solo el 23% de las pymes tiene presencia web propia (Cámara de Comercio de Santiago). Los ciclos de decisión son más largos, hay mayor sensibilidad al precio y el comprador es más informado. Esto valida directamente el problema que resuelve Revozen.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="callout callout-green">
+        <span class="callout-icon">📌</span>
+        <span class="callout-text"><strong>Fuentes del análisis:</strong> ELE-7 Ministerio de Economía Chile (dic. 2024) · SII Operación Renta 2024 · HubSpot State of Sales LATAM 2025-2026 · Índice Latinoamericano de IA 2024 · Diario Financiero oct. 2024.</span>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<script>
+const pages = {
+  'home': 'Inicio',
+  'posicionamiento': 'Posicionamiento',
+  'competencia': 'Análisis competitivo',
+  'pricing': 'Modelo de pricing',
+  'roadmap': 'Roadmap de crecimiento',
+  'mercado': 'Análisis de mercado — Chile',
+  'framework': 'Framework de agentes',
+  'stack': 'Stack técnico',
+  'integraciones': 'Integraciones MS365 y Google Workspace',
+  'inteligencia': 'Inteligencia de datos — Enriquecimiento y research',
+  'arquitectura': 'Arquitectura conceptual',
+  'prompts': 'Plantillas de prompts',
+  'casouso': 'Caso de uso — Ciclo consultivo B2B',
+  'playbook': 'Playbook v1 — Arquitecturas y KPIs',
+  'plan90': 'Plan 90 días',
+  'copy': 'Copy del sitio',
+  'ventas': 'Emails y propuesta',
+  'marca': 'Identidad visual',
+  'framer': 'Sitio en Framer',
+  'clientes': 'Clientes y resultados',
+  'aprendizajes': 'Aprendizajes'
+};
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') === `showPage('${id}')`) n.classList.add('active');
+  });
+  document.getElementById('breadcrumb-current').textContent = pages[id] || id;
+  document.querySelector('.main').scrollTop = 0;
+  window.scrollTo(0,0);
+}
+
+function toggleBlock(header) {
+  const body = header.nextElementSibling;
+  const toggle = header.querySelector('.block-toggle');
+  body.classList.toggle('open');
+  toggle.classList.toggle('open');
+}
+
+function toggleCheck(box) {
+  box.classList.toggle('checked');
+  box.textContent = box.classList.contains('checked') ? '✓' : '';
+}
+</script>
+</body>
+</html>
