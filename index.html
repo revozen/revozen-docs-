@@ -1059,32 +1059,86 @@
       <div class="page-header">
         <span class="page-icon">💰</span>
         <h1 class="page-title">Modelo de Pricing</h1>
-        <p class="page-desc">Estructura de precios recomendada por fase de crecimiento.</p>
+        <p class="page-desc">Modelo híbrido recomendado — planes por tamaño de operación comercial, no por número de agentes. Basado en valor entregado al cliente.</p>
       </div>
 
-      <div class="section-title">Estructura base (Fase 1 — primeros 5 clientes)</div>
+      <div class="callout callout-orange">
+        <span class="callout-icon">⚠️</span>
+        <span class="callout-text"><strong>Recomendación fase 1 (primeros 3–5 clientes):</strong> No publiques precios todavía. Ve 100% consultivo. Necesitas aprender qué valoran los clientes reales antes de fijar anclas de precio difíciles de cambiar. Con 3 casos funcionando, publicas los planes con confianza real.</span>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Por qué NO cobrar por número de agentes</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">El problema del modelo "X agentes = $Y mensuales"</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>El número de agentes es una métrica interna — no le importa al cliente.</strong> Un CRO no compra "4 agentes" — compra "más reuniones agendadas" o "ciclo de venta más corto".</p>
+          <p class="prose"><strong>No correlaciona con el valor:</strong> Un cliente con 20 leads/mes y ciclo de 90 días puede necesitar los 4 agentes. Uno con 200 leads/mes y ciclo de 30 días puede necesitar solo el Agente 1. El número de agentes no refleja el valor entregado.</p>
+          <p class="prose"><strong>Problema de percepción:</strong> $500/mes suena barato para mediana empresa B2B — puede generar desconfianza. Y "8 agentes por $2,500" no comunica nada claro para un VP de Ventas.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Modelo recomendado — 3 planes por tamaño de operación</div>
       <div class="table-wrap">
         <table>
-          <tr><th>Componente</th><th>Monto</th><th>Incluye</th></tr>
-          <tr><td>Setup inicial</td><td>USD $2,500–5,000 (pago único)</td><td>Diseño del sistema, configuración de 4 agentes, integración HubSpot + WhatsApp + email, dashboard, capacitación</td></tr>
-          <tr><td>Retainer mensual</td><td>USD $1,500–2,500/mes</td><td>Operación del sistema, optimización continua, soporte, reporte mensual de impacto</td></tr>
-          <tr><td>Infraestructura (incluida)</td><td>~$110/mes</td><td>HubSpot Starter, n8n, Claude API, 360dialog, Cal.com</td></tr>
+          <tr><th>Plan</th><th>Retainer/mes</th><th>Setup único</th><th>Para quién</th><th>Incluye</th></tr>
+          <tr>
+            <td><strong>Starter</strong></td>
+            <td style="color:#22C364;font-weight:600">$1,500</td>
+            <td>$2,500</td>
+            <td>Hasta 5 ejecutivos · hasta 150 leads/mes</td>
+            <td>Agentes 1 y 2 · HubSpot Starter · Email + WhatsApp · Reportes mensuales</td>
+          </tr>
+          <tr>
+            <td><strong>Growth</strong></td>
+            <td style="color:#7FC8FF;font-weight:600">$2,500</td>
+            <td>$4,000</td>
+            <td>5–12 ejecutivos · hasta 400 leads/mes</td>
+            <td>4 agentes · Apollo enriquecimiento · Briefing pre-reunión · Captura emails · Alertas internas · MS365 o Google</td>
+          </tr>
+          <tr>
+            <td><strong>Enterprise</strong></td>
+            <td style="color:#9B7BF7;font-weight:600">Desde $4,000</td>
+            <td>$5,000+</td>
+            <td>12+ ejecutivos · necesidades específicas</td>
+            <td>Todo Growth + research dinámico Clay · transcripción reuniones · integraciones complejas · SLA soporte · precio consultivo</td>
+          </tr>
         </table>
       </div>
 
       <div class="callout callout-green">
         <span class="callout-icon">✅</span>
-        <span class="callout-text"><strong>Garantía recomendada:</strong> Si al cabo de 60 días el sistema no reduce el tiempo de primera respuesta a menos de 10 minutos, Revozen devuelve el primer mes de retainer.</span>
+        <span class="callout-text"><strong>Garantía para todos los planes:</strong> Si al cabo de 60 días el sistema no reduce el tiempo de primera respuesta a menos de 10 minutos, Revozen devuelve el primer mes de retainer.</span>
       </div>
 
-      <div class="section-title">Evolución del pricing por fase</div>
+      <div class="divider"></div>
+      <div class="section-title">Evolución del pricing por fase de crecimiento</div>
       <div class="table-wrap">
         <table>
-          <tr><th>Fase</th><th>Setup</th><th>Retainer</th><th>Target MRR</th></tr>
-          <tr><td>Fase 1 (clientes 1–5)</td><td>$2,500–3,500</td><td>$1,500–2,000/mes</td><td>$10–15K</td></tr>
-          <tr><td>Fase 2 (clientes 6–20)</td><td>$3,500–5,000</td><td>$2,000–3,000/mes</td><td>$40–80K</td></tr>
-          <tr><td>Fase 3 (20+ clientes)</td><td>$5,000–8,000</td><td>$3,000–5,000/mes</td><td>$150–300K</td></tr>
+          <tr><th>Fase</th><th>Estrategia</th><th>Rango retainer</th><th>Target MRR</th></tr>
+          <tr><td><strong>Fase 1 — Validación (1–5 clientes)</strong></td><td>100% consultivo. Sin precios publicados. Descuentos de fundador a cambio de casos de éxito.</td><td>$1,200–2,000/mes</td><td>$10–15K</td></tr>
+          <tr><td><strong>Fase 2 — Escala (6–20 clientes)</strong></td><td>Publicar planes Starter y Growth. Enterprise sigue consultivo.</td><td>$1,500–3,000/mes</td><td>$40–80K</td></tr>
+          <tr><td><strong>Fase 3 — Consolidación (20+ clientes)</strong></td><td>Pricing público completo. Upsell con casos de éxito reales.</td><td>$2,500–5,000/mes</td><td>$150–300K</td></tr>
         </table>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">Señales para subir el precio</div>
+      <div class="block">
+        <div class="block-header" onclick="toggleBlock(this)">
+          <span class="block-toggle">▶</span>
+          <span class="block-title">¿Cuándo saber que puedes cobrar más?</span>
+        </div>
+        <div class="block-body">
+          <p class="prose"><strong>Tasa de cierre alta (&gt;50%):</strong> El mercado dice que hay más valor del que estás cobrando.</p>
+          <p class="prose"><strong>Nadie negocia el precio:</strong> En B2B, una propuesta sin negociación significa que el precio es irrelevante vs. el valor percibido.</p>
+          <p class="prose"><strong>Tienes casos de éxito con ROI documentado:</strong> El precio puede subir 30–50% sin perder tasa de cierre — el riesgo percibido cae dramáticamente.</p>
+          <p class="prose"><strong>Lista de espera:</strong> Si tienes más clientes de los que puedes atender, sube el precio hasta que la demanda y la oferta se equilibren.</p>
+        </div>
       </div>
     </div>
 
