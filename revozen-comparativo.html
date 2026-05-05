@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<!-- saved from url=(0051)file:///Users/rubicubo/Downloads/revozen-tabla.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revozen — Tabla Comparativa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link href="./Revozen — Tabla Comparativa_files/css2" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #ffffff;
+    font-family: 'DM Sans', sans-serif;
+    color: #111111;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .section {
+    padding: 40px 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Table wrapper */
+  .table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+  }
+
+  /* Column headers */
+  thead tr {
+    border-bottom: 1.5px solid #111;
+  }
+
+  th {
+    padding: 0 16px 20px;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #111;
+  }
+
+  th:first-child {
+    width: 28%;
+    padding-left: 0;
+    color: transparent; /* empty label cell */
+  }
+
+  th.col-others {
+    width: 36%;
+    color: #111;
+    font-weight: 600;
+  }
+
+  th.col-revozen {
+    width: 36%;
+    color: #2B7FFF;
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  /* Rows */
+  tbody tr {
+    border-bottom: 1px solid #e8e8e8;
+    transition: background 0.15s ease;
+  }
+
+  tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background: #f8f9fb;
+  }
+
+  td {
+    padding: 22px 16px;
+    vertical-align: middle;
+    font-size: 15px;
+    line-height: 1.5;
+    color: #555;
+  }
+
+  td:first-child {
+    padding-left: 0;
+    font-weight: 500;
+    color: #111;
+    font-size: 15px;
+  }
+
+  td.col-others {
+    color: #666;
+  }
+
+  td.col-revozen {
+    color: #2B7FFF;
+    font-weight: 400;
+  }
+
+  /* No badge */
+  .no-badge {
+    display: inline-block;
+    background: #f2f2f2;
+    color: #999;
+    border-radius: 6px;
+    padding: 3px 12px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  /* Divider accent */
+  .accent-line {
+    width: 40px;
+    height: 3px;
+    background: #2B7FFF;
+    border-radius: 2px;
+    margin: 0 auto 32px;
+  }
+
+  /* Responsive: stack on mobile */
+  @media (max-width: 640px) {
+    .section {
+      padding: 64px 20px 80px;
+    }
+
+    table {
+      min-width: 0;
+      display: block;
+    }
+
+    thead { display: none; }
+
+    tbody, tr, td {
+      display: block;
+      width: 100%;
+    }
+
+    tbody tr {
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      padding: 16px;
+      background: #fff;
+    }
+
+    tbody tr:hover { background: #f8f9fb; }
+
+    td {
+      padding: 6px 0;
+      border: none;
+      font-size: 14px;
+    }
+
+    td:first-child {
+      font-size: 13px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 8px;
+    }
+
+    td.col-others::before {
+      content: "Otras: ";
+      font-weight: 600;
+      color: #999;
+      font-size: 12px;
+    }
+
+    td.col-revozen::before {
+      content: "Revozen: ";
+      font-weight: 600;
+      color: #2B7FFF;
+      font-size: 12px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<section class="section">
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th class="col-others">Otras alternativas</th>
+          <th class="col-revozen">Revozen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Tipo de solución</td>
+          <td class="col-others">Automatización con reglas | LLMs Masivos</td>
+          <td class="col-revozen">Agentes autónomos con razonamiento</td>
+        </tr>
+        <tr>
+          <td>Implementación</td>
+          <td class="col-others">3–6 meses + RevOps interno | Configuración propia</td>
+          <td class="col-revozen">Operativo en 3 semanas, gestionado por Revozen</td>
+        </tr>
+        <tr>
+          <td>Modelo Comercial y Costos</td>
+          <td class="col-others">Licencia anual o Suscripción mensual | Costo alto</td>
+          <td class="col-revozen">Fee mensual + opción por resultados | Costo eficiente</td>
+        </tr>
+        <tr>
+          <td>Seguimiento</td>
+          <td class="col-others">Si A entonces B (programado) | Secuencias iguales para todos</td>
+          <td class="col-revozen">Razona sobre cada deal individualmente</td>
+        </tr>
+        <tr>
+          <td>Reactiva Pipeline Dormido</td>
+          <td class="col-others"><span class="no-badge">No</span></td>
+          <td class="col-revozen">Sí — reactiva deals fríos autónomamente</td>
+        </tr>
+        <tr>
+          <td>Canales</td>
+          <td class="col-others">Email y llamada | Email masivo</td>
+          <td class="col-revozen">WhatsApp nativo + email según contexto del deal</td>
+        </tr>
+        <tr>
+          <td>Expansión de cartera actual</td>
+          <td class="col-others"><span class="no-badge">No</span></td>
+          <td class="col-revozen">Sí — detecta señales de cross-sell en clientes existentes</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+
+
+
+</body></html>
