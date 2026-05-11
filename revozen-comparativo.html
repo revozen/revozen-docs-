@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Revozen — Tabla Comparativa</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     background: #ffffff;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', 'DM Sans', sans-serif;
     color: #111111;
     -webkit-font-smoothing: antialiased;
   }
@@ -43,7 +43,7 @@
   th {
     padding: 0 16px 20px;
     text-align: left;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Geist', sans-serif;
     font-size: 14px;
     font-weight: 500;
     color: #111;
@@ -52,7 +52,7 @@
   th:first-child {
     width: 28%;
     padding-left: 0;
-    color: transparent; /* empty label cell */
+    color: transparent;
   }
 
   th.col-others {
@@ -64,7 +64,7 @@
   th.col-revozen {
     width: 36%;
     color: #2B7FFF;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 15px;
   }
 
@@ -88,6 +88,7 @@
     font-size: 15px;
     line-height: 1.5;
     color: #555;
+    font-family: 'Geist', sans-serif;
   }
 
   td:first-child {
@@ -95,15 +96,17 @@
     font-weight: 500;
     color: #111;
     font-size: 15px;
+    font-style: italic;
   }
 
   td.col-others {
     color: #666;
+    font-weight: 400;
   }
 
   td.col-revozen {
     color: #2B7FFF;
-    font-weight: 400;
+    font-weight: 600;
   }
 
   /* No badge */
@@ -115,15 +118,6 @@
     padding: 3px 12px;
     font-size: 14px;
     font-weight: 500;
-  }
-
-  /* Divider accent */
-  .accent-line {
-    width: 40px;
-    height: 3px;
-    background: #2B7FFF;
-    border-radius: 2px;
-    margin: 0 auto 32px;
   }
 
   /* Responsive: stack on mobile */
@@ -163,10 +157,10 @@
     td:first-child {
       font-size: 13px;
       font-weight: 600;
+      font-style: italic;
       color: #999;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      margin-bottom: 4px;
       padding-bottom: 8px;
       border-bottom: 1px solid #f0f0f0;
       margin-bottom: 8px;
@@ -208,9 +202,9 @@
           <td class="col-revozen">Fee mensual por resultados</td>
         </tr>
         <tr>
-          <td>¿Quién trabaja tu pipeline?</td>
-          <td class="col-others">Herramientas que requieren configuración constante</td>
-          <td class="col-revozen">Nuestro sistema trabaja el pipeline integralmente</td>
+          <td>¿Dónde opera la inteligencia?</td>
+          <td class="col-others">Solo de cara al cliente</td>
+          <td class="col-revozen">Coordina tu equipo internamente y actúa de cara al cliente — en un solo hilo</td>
         </tr>
         <tr>
           <td>¿Cuándo empieza a generar resultados?</td>
