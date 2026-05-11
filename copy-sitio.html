@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)file:///Users/rubicubo/Downloads/revozen-copy-v4.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revozen — Copy Sitio Web v4 (lenguaje de negocio)</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+  :root {
+    --bg:#0c0c0c;--surface:#141414;--surface2:#1c1c1c;
+    --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+    --text:#f0ede8;--muted:#888580;
+    --accent:#c8f060;--adim:rgba(200,240,96,0.12);
+    --blue:#6eb5ff;--bdim:rgba(110,181,255,0.1);
+    --red:#ff7878;--rdim:rgba(255,120,120,0.1);
+    --purple:#c4a3ff;--pdim:rgba(180,120,255,0.1);
+    --teal:#50c8b4;--tdim:rgba(80,200,180,0.1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;line-height:1.7;max-width:920px;margin:0 auto;padding:3rem 2rem 6rem}
+  .doc-header{border-bottom:1px solid var(--border2);padding-bottom:2rem;margin-bottom:2.5rem}
+  .dtag{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.12em;color:var(--accent);background:var(--adim);border:1px solid rgba(200,240,96,0.25);border-radius:4px;padding:3px 10px;margin-bottom:1rem}
+  h1{font-family:'DM Serif Display',serif;font-size:2.2rem;font-weight:400;line-height:1.2;margin-bottom:.5rem}
+  .dmeta{font-size:13px;color:var(--muted);margin-top:.5rem}
+  .rule{background:var(--adim);border:1px solid rgba(200,240,96,0.2);border-radius:10px;padding:1rem 1.25rem;margin-bottom:2.5rem;font-size:13px;color:#d4f577;line-height:1.6}
+  .rule strong{font-weight:600;display:block;margin-bottom:4px;font-size:14px}
+  .toc{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;margin-bottom:3rem}
+  .toc-title{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.1em;color:var(--muted);margin-bottom:.75rem}
+  .toc a{display:block;color:var(--muted);text-decoration:none;font-size:13px;padding:3px 0}
+  .toc a:hover{color:var(--text)}
+  .toc a span{color:var(--accent);font-family:'DM Mono',monospace;font-size:11px;margin-right:8px}
+  .section{margin-bottom:3.5rem}
+  .slabel{display:flex;align-items:center;gap:12px;margin-bottom:1.25rem}
+  .snum{font-family:'DM Mono',monospace;font-size:11px;color:var(--accent);background:var(--adim);border:1px solid rgba(200,240,96,0.2);border-radius:4px;padding:2px 8px;flex-shrink:0}
+  .stitle{font-family:'DM Serif Display',serif;font-size:1.45rem;font-weight:400}
+  .block{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:.75rem}
+  .bh{display:flex;align-items:center;gap:10px;padding:.9rem 1.25rem;cursor:pointer;border-bottom:1px solid transparent;transition:background .15s;user-select:none}
+  .bh:hover{background:var(--surface2)}
+  .bh.open{border-bottom-color:var(--border)}
+  .btag{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.06em;padding:2px 8px;border-radius:4px;flex-shrink:0;border:1px solid}
+  .t-hero{background:var(--adim);color:var(--accent);border-color:rgba(200,240,96,0.2)}
+  .t-prob{background:var(--rdim);color:var(--red);border-color:rgba(255,120,120,0.2)}
+  .t-comp{background:var(--bdim);color:var(--blue);border-color:rgba(110,181,255,0.2)}
+  .t-val{background:var(--pdim);color:var(--purple);border-color:rgba(180,120,255,0.2)}
+  .t-how{background:var(--tdim);color:var(--teal);border-color:rgba(80,200,180,0.2)}
+  .t-cta{background:var(--adim);color:var(--accent);border-color:rgba(200,240,96,0.2)}
+  .bname{font-size:13px;font-weight:500;color:var(--text);flex:1}
+  .bchev{font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+  .bchev.open{transform:rotate(180deg)}
+  .bb{display:none;padding:1.25rem}
+  .bb.open{display:block}
+  .field{margin-bottom:1.25rem}
+  .field:last-child{margin-bottom:0}
+  .flabel{font-size:10px;font-family:'DM Mono',monospace;letter-spacing:.1em;color:var(--muted);margin-bottom:.4rem}
+  .cbox{position:relative;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:1rem 3.5rem 1rem 1rem;font-size:14px;color:var(--text);white-space:pre-wrap;line-height:1.75}
+  .cbtn{position:absolute;top:8px;right:8px;font-size:10px;font-family:'DM Mono',monospace;background:var(--surface);border:1px solid var(--border2);color:var(--muted);border-radius:4px;padding:3px 8px;cursor:pointer;transition:all .15s}
+  .cbtn:hover{border-color:var(--accent);color:var(--accent)}
+  .cbtn.done{color:var(--accent);border-color:var(--accent)}
+  .note{font-size:12px;color:var(--muted);margin-top:.5rem;padding:.5rem .75rem;border-left:2px solid var(--border2);line-height:1.6}
+  .hl{background:var(--adim);border:1px solid rgba(200,240,96,0.2);border-radius:8px;padding:.75rem 1rem;font-size:13px;color:#d4f577;margin-bottom:1rem;line-height:1.6}
+  .div{height:1px;background:var(--border);margin:1.25rem 0}
+</style>
+</head>
+<body>
+
+<div class="doc-header">
+  <div class="dtag">REVOZEN.AI — COPY SITIO WEB v4</div>
+  <h1>Copy con lenguaje<br>100% de negocio</h1>
+  <p class="dmeta">Mayo 2026 · Regla: si un Gerente Comercial no lo diría en una reunión de resultados, no va.</p>
+</div>
+
+<div class="rule">
+  <strong>Regla aplicada en cada sección</strong>
+  Ninguna celda, título ni descripción habla de cómo funciona la tecnología. Todo habla de qué gana o deja de perder el negocio del cliente. El comprador es un Gerente Comercial o Gerente General — no un CTO.
+</div>
+
+<div class="toc">
+  <div class="toc-title">ÍNDICE</div>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s1"><span>01</span> Hero</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s2"><span>02</span> El problema — 4 dolores</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s3"><span>03</span> Comparación</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s4"><span>04</span> 6 atributos de valor</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s5"><span>05</span> Cómo funciona — 3 pasos</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s6"><span>06</span> Integraciones</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s7"><span>07</span> CTA final</a>
+  <a href="file:///Users/rubicubo/Downloads/revozen-copy-v4.html#s8"><span>08</span> Nav, footer y SEO</a>
+</div>
+
+
+<!-- S1 -->
+<div class="section" id="s1">
+  <div class="slabel"><span class="snum">01</span><span class="stitle">Hero</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-hero">HERO</span><span class="bname">Badge</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">TEXTO</div>
+        <div class="cbox">Más revenue. Sin sumar gente.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Revenue Agentic AI para LATAM" — ese era un badge de categoría tecnológica. Este habla del resultado de negocio desde el primer elemento visible.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-hero">HERO</span><span class="bname">Headline principal</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">OPCIÓN A — RECOMENDADA</div>
+        <div class="cbox">Tu pipeline trabaja solo.
+Tú solo cierras.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se mantiene — ya era lenguaje de negocio puro. Comunica el resultado sin mencionar tecnología.</p>
+      </div>
+      <div class="div"></div>
+      <div class="field">
+        <div class="flabel">OPCIÓN B</div>
+        <div class="cbox">El revenue que estás dejando ir
+empieza a trabajar para ti.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Más orientado al dolor de pipeline dormido. Útil si el A/B test muestra que el visitor llega con ese dolor específico.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-hero">HERO</span><span class="bname">Subheadline</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">VERSIÓN DE NEGOCIO</div>
+        <div class="cbox">Revozen trabaja tu pipeline de ventas de forma autónoma — encuentra las oportunidades que tu equipo no tiene tiempo de perseguir, hace el seguimiento, y solo escala cuando hay un prospecto listo para cerrar.
+
+Sin sumar personas. Sin cambiar tus herramientas. Con resultados medibles desde el mes 1.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se eliminó toda referencia a HubSpot, WhatsApp y "en español" del subheadline — eso es lenguaje técnico. El subheadline ahora responde a "¿qué gano yo?" en términos de negocio. Las integraciones se explican después.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-hero">HERO</span><span class="bname">CTAs y trust signals</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">CTA PRIMARIO</div>
+        <div class="cbox">Descubre cuánto pipeline tienes dormido<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Obtén un diagnóstico gratuito" — ese era proceso. Este es el resultado que el diagnóstico entrega. El Gerente Comercial hace clic porque quiere saber ese número, no porque quiere un diagnóstico.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">CTA SECUNDARIO</div>
+        <div class="cbox">Ver cómo funciona<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">TRUST SIGNALS</div>
+        <div class="cbox">· Revenue visible desde el mes 1
+· Sin sumar personas al equipo
+· Sin reemplazar las herramientas que ya usas<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se reemplazó "Operativo en 3 semanas" (técnico/proceso) por "Revenue visible desde el mes 1" (resultado de negocio). Los otros dos hablan de lo que NO pierdes — que es tan poderoso como lo que ganas.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S2 -->
+<div class="section" id="s2">
+  <div class="slabel"><span class="snum">02</span><span class="stitle">El problema</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-prob">PROBLEMA</span><span class="bname">Titular de sección</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">HEADLINE</div>
+        <div class="cbox">Tu equipo de ventas trabaja a tope. Tu pipeline, no.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Si tu empresa vende servicios B2B, ya viviste esto". El nuevo headline establece la tensión central: esfuerzo vs resultado. Es el problema en una sola línea.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">SUBTÍTULO</div>
+        <div class="cbox">Las empresas B2B medianas pierden entre el 30% y el 50% de su pipeline por falta de seguimiento — no por falta de demanda. El problema no es tu producto ni tu equipo. Es que no hay forma humana de trabajar bien todos los deals al mismo tiempo.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se agregó "El problema no es tu producto ni tu equipo" — eso elimina la defensividad del lector y lo pone del lado de Revozen antes de ver la solución.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-prob">PROBLEMA</span><span class="bname">Dolor 1 — Leads que se enfrían</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Cada hora sin responder, un deal más cerca de perderse<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Un lead que no recibe respuesta en las primeras horas tiene diez veces menos probabilidad de convertirse. Tu equipo tiene 30 deals activos — responder a todos a tiempo es humanamente imposible.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se eliminó "10x" como dato técnico aislado y se integró como consecuencia de negocio. "Humanamente imposible" valida al equipo y justifica la solución.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-prob">PROBLEMA</span><span class="bname">Dolor 2 — Seguimiento inconsistente</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">El deal no se pierde en la propuesta. Se pierde en el silencio después.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Cuando tu equipo está cerrando, los prospectos tibios quedan sin atención. Sin seguimiento sistemático, el que gana el deal no es el mejor proveedor — es el más persistente.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">"El más persistente" es una verdad que el Gerente Comercial reconoce inmediatamente de su propia experiencia como comprador y como vendedor.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-prob">PROBLEMA</span><span class="bname">Dolor 3 — Pipeline dormido</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Tienes revenue esperando en tu CRM. Nadie lo está trabajando.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Hay deals en tu pipeline que llevan meses sin movimiento. Ese prospecto ya te conoce, ya vio tu propuesta, ya mostró interés. Solo necesitaba que alguien volviera a buscarlo en el momento correcto. Pero tu equipo estaba cerrando otras cosas.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">La frase "ya te conoce, ya vio tu propuesta, ya mostró interés" hace que el lector calcule mentalmente cuánto vale ese pipeline. No necesita que Revozen le diga el número — él lo sabe.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-prob">PROBLEMA</span><span class="bname">Dolor 4 — Revenue no capturado</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Pagas para generar demanda. Después la dejas ir.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Marketing genera leads. El equipo comercial trabaja los más calientes. El resto — que ya costó tiempo y dinero conseguir — se pierde antes de llegar al cierre. Sin un sistema que opere la conversión de principio a fin, una parte importante de tu inversión comercial no retorna.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S3 -->
+<div class="section" id="s3">
+  <div class="slabel"><span class="snum">03</span><span class="stitle">Comparación</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-comp">COMPARACIÓN</span><span class="bname">Titular y subtítulo</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">HEADLINE</div>
+        <div class="cbox">Cada mes sin sistema, tu pipeline sigue sangrando<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">SUBTÍTULO</div>
+        <div class="cbox">Las herramientas existentes resuelven partes del problema. Ninguna trabaja tu pipeline de principio a fin, de forma autónoma, sin que alguien en tu equipo tenga que operarlas.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-comp">COMPARACIÓN</span><span class="bname">Preguntas de la tabla — lenguaje de negocio</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="hl">La tabla usa preguntas en vez de criterios técnicos. El Gerente Comercial se reconoce en las preguntas — y encuentra la respuesta que quiere escuchar en la columna de Revozen.</div>
+      <div class="field">
+        <div class="flabel">FILA 1</div>
+        <div class="cbox">Pregunta: ¿Quién trabaja tu pipeline?
+Otras: Tu equipo — cuando tiene tiempo
+Revozen: El sistema trabaja el pipeline. Tu equipo solo cierra.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 2</div>
+        <div class="cbox">Pregunta: ¿Cuándo empieza a generar resultados?
+Otras: 3–6 meses para implementar, más tiempo para ver retorno
+Revozen: Resultados medibles desde el primer mes<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 3</div>
+        <div class="cbox">Pregunta: ¿Qué pagas?
+Otras: Licencia cara + equipo interno para operarla
+Revozen: Pagas por resultados, no por licencias ni por horas<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 4</div>
+        <div class="cbox">Pregunta: ¿Qué pasa con los prospectos que no responden?
+Otras: Se pierden — nadie tiene tiempo de perseguirlos
+Revozen: Ningún prospecto queda sin seguimiento, nunca<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 5</div>
+        <div class="cbox">Pregunta: ¿Recuperas pipeline dormido?
+Otras: No
+Revozen: Sí — recuperas revenue que ya creías perdido<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 6</div>
+        <div class="cbox">Pregunta: ¿Dónde contacta a tus prospectos?
+Otras: Email — donde menos responden
+Revozen: Donde el prospecto realmente contesta<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FILA 7</div>
+        <div class="cbox">Pregunta: ¿Crece el revenue de clientes actuales?
+Otras: No
+Revozen: Sí — detecta cuándo un cliente está listo para comprar más<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">FRASE DE CIERRE</div>
+        <div class="cbox">HubSpot tiene las herramientas. Revozen hace que funcionen — sin que nadie en tu equipo tenga que operarlas.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S4 -->
+<div class="section" id="s4">
+  <div class="slabel"><span class="snum">04</span><span class="stitle">6 atributos de valor</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Titular de sección</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">HEADLINE</div>
+        <div class="cbox">Lo que cambia cuando tu pipeline trabaja solo<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Una nueva forma de operar tu funnel comercial B2B" — ese era proceso. El nuevo headline habla del estado que el cliente quiere alcanzar.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">SUBTÍTULO</div>
+        <div class="cbox">No es una herramienta más. Es la diferencia entre dejar revenue sobre la mesa y capturarlo.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 1 — Respuesta inmediata</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Ningún lead se enfría esperando respuesta<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Sin importar cuántos deals tenga tu equipo activos, cada prospecto recibe respuesta en minutos. La velocidad de respuesta es el primer deal que se gana o se pierde en ventas B2B.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 2 — Pipeline activo 100%</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Cada prospecto, siempre activo. Sin excepción.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Ningún lead queda sin actividad por más de 7 días. Mientras tu equipo cierra los deals calientes, el sistema mantiene vivos todos los demás — con el mensaje correcto, en el momento correcto.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 3 — Pipeline Rescue</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Recupera el revenue que ya diste por perdido<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Hay deals en tu CRM que llevan meses sin movimiento. Revozen los identifica, vuelve a contactar al prospecto con el ángulo correcto, y solo te alerta cuando hay una oportunidad real de cerrar.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 4 — Inteligencia contextual</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Tu equipo llega a cada reunión sabiendo exactamente qué decir<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">Antes de cada reunión, el sistema prepara un resumen del historial del prospecto: qué dijo, qué le preocupa, qué propuesta recibió, cuánto tiempo lleva en el proceso. Tu ejecutivo llega preparado — siempre.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 5 — Sin migraciones</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Empieza a generar resultados sin cambiar nada de lo que ya tienes<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">No hay migración, no hay capacitación, no hay cambio de herramientas. Revozen se conecta al CRM y los canales que tu equipo ya usa hoy — y empieza a trabajar desde ahí.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-val">VALOR</span><span class="bname">Atributo 6 — Tú vendes, nosotros operamos</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TÍTULO</div>
+        <div class="cbox">Tú vendes. Nosotros nos encargamos del resto.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Este es el atributo más diferenciador — se mantiene en esencia, pero se simplifica. "El resto" es más poderoso que "operar el sistema" porque el lector proyecta todo lo que odia hacer en ese "resto".</p>
+      </div>
+      <div class="field">
+        <div class="flabel">DESCRIPCIÓN</div>
+        <div class="cbox">No compras una licencia y la configuras solo. Revozen diseña, implementa y optimiza el sistema por ti — mes a mes. Sin equipo técnico interno. Sin sorpresas.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S5 -->
+<div class="section" id="s5">
+  <div class="slabel"><span class="snum">05</span><span class="stitle">Cómo funciona</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-how">PROCESO</span><span class="bname">3 pasos</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">TITULAR DE SECCIÓN</div>
+        <div class="cbox">De cero a pipeline activo en tres semanas<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Operativo en 3 semanas. Sin RevOps interno." — eso era proceso y restricción. El nuevo headline habla del estado que el cliente alcanza, no del tiempo que toma.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">PASO 1</div>
+        <div class="cbox">Vemos cuánto revenue tienes dormido
+
+Revisamos tu pipeline y calculamos el valor de los deals que tu equipo no está trabajando. En menos de una semana sabes exactamente cuánto dinero hay disponible para recuperar — antes de comprometerte con nada.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">"Antes de comprometerte con nada" elimina el riesgo percibido y facilita dar el primer paso.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">PASO 2</div>
+        <div class="cbox">Configuramos el sistema a tu proceso
+
+Adaptamos Revozen a tu forma de vender, a tu industria, y a los canales que tus prospectos realmente usan. Tu equipo no cambia nada — el sistema se adapta a ellos, no al revés.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">PASO 3</div>
+        <div class="cbox">El sistema trabaja. Tú ves los resultados.
+
+Revozen opera tu pipeline de forma autónoma. Cada semana recibes un reporte con las oportunidades recuperadas, las reuniones generadas y el revenue en proceso. Nosotros optimizamos mes a mes para mejorar los números.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S6 -->
+<div class="section" id="s6">
+  <div class="slabel"><span class="snum">06</span><span class="stitle">Integraciones</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-how">INTEGRACIONES</span><span class="bname">Copy del bloque</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">TITULAR</div>
+        <div class="cbox">Funciona con las herramientas que tu equipo ya usa<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Integrado a tu mundo" — ese era metafórico. El nuevo titular responde directamente a la objeción "¿tendré que cambiar algo?"</p>
+      </div>
+      <div class="field">
+        <div class="flabel">SUBTÍTULO</div>
+        <div class="cbox">Sin migraciones. Sin capacitaciones. Sin fricción. Revozen se conecta al CRM, el email y los canales que tu equipo ya tiene — y empieza a generar resultados desde el primer mes.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">LOGOS (orden de prioridad)</div>
+        <div class="cbox">HubSpot · WhatsApp Business · Gmail · Outlook · Slack · Calendly · SendGrid<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S7 -->
+<div class="section" id="s7">
+  <div class="slabel"><span class="snum">07</span><span class="stitle">CTA final</span></div>
+
+  <div class="block">
+    <div class="bh open" onclick="tog(this)"><span class="btag t-cta">CTA</span><span class="bname">Cierre</span><span class="bchev open">▼</span></div>
+    <div class="bb open">
+      <div class="field">
+        <div class="flabel">HEADLINE</div>
+        <div class="cbox">¿Cuánto revenue tienes dormido en tu CRM hoy?<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">SUBTÍTULO</div>
+        <div class="cbox">En 45 minutos revisamos tu pipeline juntos, calculamos el valor de las oportunidades que tu equipo no está trabajando, y te mostramos cuánto puede recuperar Revozen en los primeros 30 días. Sin costo, sin compromiso.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">"En los primeros 30 días" es más creíble y concreto que "desde el mes 1". Ancla una expectativa de resultado real, no un claim genérico.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">BOTÓN</div>
+        <div class="cbox">Quiero ver mi pipeline dormido<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Agenda tu diagnóstico gratuito" — ese era proceso. "Quiero ver mi pipeline dormido" es el resultado que el visitante quiere. El botón habla en primera persona del visitante, no de Revozen.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">MICRO-COPY BAJO EL BOTÓN</div>
+        <div class="cbox">45 minutos · Gratis · Resultado concreto al terminar<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- S8 -->
+<div class="section" id="s8">
+  <div class="slabel"><span class="snum">08</span><span class="stitle">Nav, footer y SEO</span></div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-how">NAV</span><span class="bname">Navegación</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">LINKS</div>
+        <div class="cbox">Cómo funciona · Casos de uso · Blog<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Se eliminó "Soluciones" — en esta etapa Revozen tiene un producto. No hay menú de soluciones que justifique ese link. Se agrega cuando haya 2+ productos.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">CTA NAV</div>
+        <div class="cbox">Ver mi pipeline dormido<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-how">SEO</span><span class="bname">Metadata SEO</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">PAGE TITLE</div>
+        <div class="cbox">Revozen — Más revenue. Sin sumar gente. Para empresas B2B en LATAM.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">META DESCRIPTION</div>
+        <div class="cbox">Revozen trabaja tu pipeline de ventas de forma autónoma — recupera deals dormidos, hace seguimiento de prospectos y solo escala cuando hay una oportunidad real de cerrar. Sin sumar personas. Resultados desde el mes 1.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+      <div class="field">
+        <div class="flabel">OG TITLE</div>
+        <div class="cbox">Tu pipeline trabaja solo. Tú solo cierras. — Revozen.ai<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="bh" onclick="tog(this)"><span class="btag t-how">FOOTER</span><span class="bname">Footer</span><span class="bchev">▼</span></div>
+    <div class="bb">
+      <div class="field">
+        <div class="flabel">TAGLINE</div>
+        <div class="cbox">Más revenue. Sin sumar gente. Para empresas B2B en Latinoamérica.<button class="cbtn" onclick="cp(this)">copiar</button></div>
+        <p class="note">Reemplaza "Revenue Agentic AI para empresas B2B en Latinoamérica" — ese era categoría tecnológica. El nuevo tagline es el resultado de negocio en tres frases cortas.</p>
+      </div>
+      <div class="field">
+        <div class="flabel">COPYRIGHT</div>
+        <div class="cbox">© 2026 Revozen.ai — Todos los derechos reservados<button class="cbtn" onclick="cp(this)">copiar</button></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function tog(h){var o=h.classList.contains('open');h.classList.toggle('open',!o);var c=h.querySelector('.bchev');if(c)c.classList.toggle('open',!o);var b=h.nextElementSibling;if(b)b.classList.toggle('open',!o);}
+function cp(btn){var box=btn.parentElement;var t=box.innerText.replace(/copiar|copiado/g,'').trim();navigator.clipboard.writeText(t).then(function(){btn.textContent='copiado';btn.classList.add('done');setTimeout(function(){btn.textContent='copiar';btn.classList.remove('done');},1500);}).catch(function(){btn.textContent='copiado';setTimeout(function(){btn.textContent='copiar';},1500);});}
+</script>
+
+
+</body></html>
