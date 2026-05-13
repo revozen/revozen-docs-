@@ -1,0 +1,183 @@
+
+<h2 class="sr-only">Análisis de rentabilidad Revozen: tres escenarios de clientes con costos del stack real y proyección de margen.</h2>
+
+<style>
+  .rv-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 1.5rem; }
+  .rv-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; }
+  .rv-card.featured { border: 2px solid #185FA5; }
+  .rv-badge { display: inline-block; background: var(--color-background-info); color: var(--color-text-info); font-size: 11px; padding: 2px 8px; border-radius: var(--border-radius-md); margin-bottom: 8px; }
+  .rv-scenario { font-size: 13px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 2px; }
+  .rv-clients { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin: 0 0 12px; }
+  .rv-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; border-bottom: 0.5px solid var(--color-border-tertiary); }
+  .rv-row:last-child { border-bottom: none; }
+  .rv-label { color: var(--color-text-secondary); }
+  .rv-val { font-weight: 500; color: var(--color-text-primary); }
+  .rv-val.pos { color: var(--color-text-success); }
+  .rv-val.neg { color: var(--color-text-danger); }
+  .rv-pct { font-size: 11px; padding: 2px 6px; border-radius: var(--border-radius-md); margin-left: 6px; }
+  .rv-pct.pos { background: var(--color-background-success); color: var(--color-text-success); }
+  .rv-pct.neg { background: var(--color-background-danger); color: var(--color-text-danger); }
+  .rv-section { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin: 1rem 0 0.5rem; }
+  .rv-toggle { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .rv-toggle button { font-size: 12px; padding: 4px 12px; cursor: pointer; }
+  .rv-toggle button.active { background: var(--color-background-info); color: var(--color-text-info); border-color: var(--color-border-info); }
+  .rv-note { font-size: 12px; color: var(--color-text-tertiary); margin-top: 1.5rem; padding-top: 1rem; border-top: 0.5px solid var(--color-border-tertiary); line-height: 1.6; }
+  .rv-cost-detail { font-size: 12px; color: var(--color-text-tertiary); margin: 4px 0 0 0; }
+</style>
+
+<div style="margin-bottom: 1rem;">
+  <div class="rv-section">Precio por cliente</div>
+  <div class="rv-toggle" id="toggle">
+    <button class="active" data-price="1200">$1,200/mes</button>
+    <button data-price="1600">$1,600/mes</button>
+    <button data-price="2000">$2,000/mes</button>
+  </div>
+</div>
+
+<div class="rv-grid" id="cards"></div>
+
+<div class="rv-section">Curva de rentabilidad mensual</div>
+<div style="position: relative; width: 100%; height: 260px; margin-bottom: 1rem;">
+  <canvas id="chart" role="img" aria-label="Gráfico de margen neto mensual por número de clientes y precio de retainer"></canvas>
+</div>
+
+<div class="rv-note" id="notes"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const SCENARIOS = [
+  { label: 'Arranque', clients: 4, note: 'MVP / primeros clientes' },
+  { label: 'Crecimiento', clients: 10, note: 'Punto de inflexión', featured: true },
+  { label: 'Escala', clients: 20, note: 'Target año 1' }
+];
+
+function costs(clients) {
+  const railway = clients * 20;
+  const claude = clients * 8;
+  const sendgrid = 20;
+  const recall = clients * 15;
+  const slack = 15;
+  const ops = clients * 30;
+  const total = railway + claude + sendgrid + recall + slack + ops;
+  return { railway, claude, sendgrid, recall, slack, ops, total };
+}
+
+function fmt(n) {
+  return '$' + Math.round(n).toLocaleString('en-US');
+}
+
+let price = 1200;
+let chartInst = null;
+
+function render() {
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+
+  SCENARIOS.forEach(s => {
+    const c = costs(s.clients);
+    const revenue = s.clients * price;
+    const margin = revenue - c.total;
+    const pct = Math.round((margin / revenue) * 100);
+    const isPos = margin >= 0;
+
+    const card = document.createElement('div');
+    card.className = 'rv-card' + (s.featured ? ' featured' : '');
+    card.innerHTML = `
+      ${s.featured ? '<div class="rv-badge">Objetivo inicial</div>' : '<div style="height:20px"></div>'}
+      <div class="rv-scenario">${s.label}</div>
+      <div class="rv-clients">${s.clients} clientes</div>
+      <div class="rv-row"><span class="rv-label">Ingresos</span><span class="rv-val">${fmt(revenue)}</span></div>
+      <div class="rv-row"><span class="rv-label">Costos stack</span><span class="rv-val neg">${fmt(c.total)}</span></div>
+      <div class="rv-row" style="margin-top:4px; padding-top:8px; border-top: 0.5px solid var(--color-border-secondary);">
+        <span class="rv-label" style="font-weight:500">Margen neto</span>
+        <span class="rv-val ${isPos ? 'pos' : 'neg'}">${fmt(margin)} <span class="rv-pct ${isPos ? 'pos' : 'neg'}">${pct}%</span></span>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  const notesEl = document.getElementById('notes');
+  notesEl.innerHTML = `
+    <strong style="color: var(--color-text-primary); font-size:13px;">Desglose de costos por cliente (estimado)</strong><br>
+    Railway n8n ~$20 · Claude API ~$8 · Recall.ai ~$15 · SendGrid $20 total · Slack $15 total · Ops/soporte ~$30
+    <br><br>
+    <strong style="color: var(--color-text-primary); font-size:13px;">Notas metodológicas</strong><br>
+    Claude API: Sonnet 4.6 ($3/$15 por MTok). Estimado ~50 deals procesados/cliente/mes, ~500 tokens input + 300 output por deal = ~40K tokens/cliente → ~$0.25 en tokens. El costo real dependerá del volumen de deals y el contexto que se incluya (emails, transcripciones). Con contexto rico puede llegar a $15–25/cliente.<br>
+    Recall.ai: $0.50/hr grabación + $0.15/hr transcripción. Estimado 20 llamadas × 45 min/cliente/mes.<br>
+    Railway: instancia dedicada por cliente, ~$15–25/mes según carga.<br>
+    Ops/soporte: tiempo de gestión prorrateado por cliente.
+  `;
+
+  updateChart();
+}
+
+function updateChart() {
+  const ctx = document.getElementById('chart').getContext('2d');
+  const clientRange = Array.from({length: 20}, (_, i) => i + 1);
+
+  const prices = [1200, 1600, 2000];
+  const colors = ['#888780', '#185FA5', '#1D9E75'];
+  const dashes = [[6,3], [], [2,2]];
+
+  const datasets = prices.map((p, i) => ({
+    label: '$' + p.toLocaleString() + '/mes',
+    data: clientRange.map(n => Math.round(n * p - costs(n).total)),
+    borderColor: colors[i],
+    backgroundColor: 'transparent',
+    borderWidth: p === price ? 2.5 : 1.5,
+    borderDash: dashes[i],
+    pointRadius: 0,
+    tension: 0.3
+  }));
+
+  const breakevens = prices.map(p => {
+    for (let n = 1; n <= 20; n++) {
+      if (n * p - costs(n).total >= 0) return n;
+    }
+    return null;
+  });
+
+  if (chartInst) chartInst.destroy();
+  chartInst = new Chart(ctx, {
+    type: 'line',
+    data: { labels: clientRange, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ctx.dataset.label + ': $' + Math.round(ctx.raw).toLocaleString()
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'clientes', font: { size: 11 }, color: '#888780' },
+          ticks: { font: { size: 11 } },
+          grid: { color: 'rgba(128,128,128,0.1)' }
+        },
+        y: {
+          title: { display: true, text: 'margen neto mensual (USD)', font: { size: 11 }, color: '#888780' },
+          ticks: {
+            font: { size: 11 },
+            callback: v => '$' + Math.round(v).toLocaleString()
+          },
+          grid: { color: 'rgba(128,128,128,0.1)' }
+        }
+      }
+    }
+  });
+}
+
+document.getElementById('toggle').addEventListener('click', e => {
+  const btn = e.target.closest('button');
+  if (!btn) return;
+  price = parseInt(btn.dataset.price);
+  document.querySelectorAll('#toggle button').forEach(b => b.classList.toggle('active', b === btn));
+  render();
+});
+
+render();
+</script>
