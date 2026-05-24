@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<!-- saved from url=(0046)https://revozen.github.io/revozen-diagnostico/ -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revozen — Diagnóstico Inicial</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0f1117;color:#e8eaf0;min-height:100vh;padding:32px 24px;font-size:14px;line-height:1.6}
+  .container{max-width:720px;margin:0 auto}
+
+  /* HEADER */
+  .header{margin-bottom:36px}
+  .logo{display:flex;align-items:center;gap:10px;margin-bottom:24px}
+  .logo svg{width:32px;height:32px}
+  .logo-text{font-size:16px;font-weight:700;letter-spacing:-.3px}
+  .logo-text span{color:#22C364}
+  .logo-ai{font-size:9px;color:#22C364;font-weight:600;vertical-align:super;margin-left:1px}
+  h1{font-size:26px;font-weight:700;letter-spacing:-.8px;margin-bottom:8px}
+  .header-desc{font-size:14px;color:#8b92a5;max-width:560px;line-height:1.7}
+  .header-time{display:inline-flex;align-items:center;gap:6px;margin-top:12px;font-size:12px;color:#555e72;background:#161b25;border:1px solid rgba(255,255,255,0.08);padding:5px 12px;border-radius:999px}
+
+  /* PROGRESS */
+  .progress-wrap{background:rgba(255,255,255,0.06);border-radius:999px;height:4px;margin:28px 0 32px}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#22C364,#7FC8FF);transition:width .4s ease;width:0%}
+  .progress-label{font-size:11px;color:#555e72;text-align:right;margin-top:6px}
+
+  /* SECTIONS */
+  .section{display:none}
+  .section.active{display:block}
+  .section-header{margin-bottom:24px}
+  .section-num{font-size:11px;font-weight:600;color:#22C364;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+  .section-title{font-size:20px;font-weight:600;letter-spacing:-.4px;margin-bottom:6px}
+  .section-desc{font-size:13px;color:#8b92a5;line-height:1.6}
+
+  /* QUESTIONS */
+  .question{margin-bottom:24px}
+  .q-label{font-size:13px;font-weight:500;color:#e8eaf0;margin-bottom:8px;display:block}
+  .q-hint{font-size:12px;color:#555e72;margin-bottom:8px;display:block}
+  .q-required{color:#F87171;margin-left:3px}
+
+  /* INPUTS */
+  input[type="text"],input[type="email"],input[type="number"],textarea,select{
+    width:100%;background:#161b25;border:1px solid rgba(255,255,255,0.1);border-radius:8px;
+    padding:10px 14px;font-size:13px;color:#e8eaf0;font-family:inherit;
+    transition:border-color .15s;outline:none;
+  }
+  input[type="text"]:focus,input[type="email"]:focus,input[type="number"]:focus,textarea:focus,select:focus{
+    border-color:#22C364;
+  }
+  textarea{resize:vertical;min-height:80px}
+  select option{background:#161b25}
+
+  /* RADIO / CHECKBOX */
+  .options{display:flex;flex-direction:column;gap:8px}
+  .options.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .option{display:flex;align-items:flex-start;gap:10px;background:#161b25;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;cursor:pointer;transition:all .15s}
+  .option:hover{border-color:rgba(34,195,100,0.4);background:#1a2520}
+  .option.selected{border-color:#22C364;background:rgba(34,195,100,0.08)}
+  .option input{display:none}
+  .option-dot{width:16px;height:16px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .option.selected .option-dot{background:#22C364;border-color:#22C364}
+  .option-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;display:none}
+  .option.selected .option-dot::after{display:block}
+  .option-check{width:16px;height:16px;border-radius:4px;border:1.5px solid rgba(255,255,255,0.2);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:10px}
+  .option.selected .option-check{background:#22C364;border-color:#22C364;color:#000}
+  .option-text{font-size:13px;color:#8b92a5;flex:1;line-height:1.4}
+  .option.selected .option-text{color:#e8eaf0}
+  .option-sub{font-size:11px;color:#555e72;margin-top:2px}
+
+  /* RANGE */
+  .range-wrap{padding:4px 0}
+  input[type="range"]{width:100%;accent-color:#22C364;cursor:pointer}
+  .range-labels{display:flex;justify-content:space-between;font-size:11px;color:#555e72;margin-top:4px}
+  .range-val{text-align:center;font-size:18px;font-weight:600;color:#22C364;margin-bottom:6px}
+
+  /* SCALE */
+  .scale{display:flex;gap:6px}
+  .scale-btn{flex:1;padding:8px 4px;background:#161b25;border:1px solid rgba(255,255,255,0.08);border-radius:6px;text-align:center;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;color:#8b92a5}
+  .scale-btn:hover{border-color:rgba(34,195,100,0.4)}
+  .scale-btn.selected{background:rgba(34,195,100,0.12);border-color:#22C364;color:#22C364}
+  .scale-labels{display:flex;justify-content:space-between;font-size:10px;color:#555e72;margin-top:4px}
+
+  /* SEPARATOR */
+  .sep{height:1px;background:rgba(255,255,255,0.06);margin:20px 0}
+
+  /* NAVIGATION */
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.06)}
+  .btn-back{padding:10px 20px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:none;color:#8b92a5;cursor:pointer;font-size:13px;font-family:inherit;transition:all .15s}
+  .btn-back:hover{background:rgba(255,255,255,0.04);color:#e8eaf0}
+  .btn-next{padding:10px 24px;border-radius:8px;border:none;background:#22C364;color:#000;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:opacity .15s}
+  .btn-next:hover{opacity:.9}
+  .btn-next:disabled{opacity:.4;cursor:not-allowed}
+
+  /* RESULT */
+  .result{display:none}
+  .result.active{display:block}
+  .result-header{text-align:center;padding:32px 0 24px}
+  .result-icon{font-size:48px;margin-bottom:16px}
+  .result-title{font-size:22px;font-weight:700;margin-bottom:8px}
+  .result-desc{font-size:14px;color:#8b92a5;max-width:480px;margin:0 auto}
+  .plan-card{border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px;margin:20px 0;background:#161b25}
+  .plan-badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;display:inline-block;margin-bottom:10px}
+  .plan-name{font-size:20px;font-weight:700;margin-bottom:4px}
+  .plan-price{font-size:14px;color:#8b92a5;margin-bottom:14px}
+  .plan-includes{font-size:13px;color:#8b92a5;line-height:1.8}
+  .plan-includes li{margin-left:16px}
+  .insights{margin-top:20px}
+  .insight-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+  .insight-item:last-child{border-bottom:none}
+  .insight-icon{font-size:16px;flex-shrink:0}
+  .insight-text{font-size:13px;color:#8b92a5;line-height:1.5}
+  .insight-text strong{color:#e8eaf0}
+  .cta-box{background:rgba(34,195,100,0.08);border:1px solid rgba(34,195,100,0.2);border-radius:12px;padding:20px;text-align:center;margin-top:24px}
+  .cta-box p{font-size:13px;color:#8b92a5;margin-bottom:14px}
+  .cta-btn{display:inline-block;padding:12px 28px;background:#22C364;color:#000;font-weight:700;font-size:14px;border-radius:8px;text-decoration:none;cursor:pointer;border:none;font-family:inherit}
+  .callout{border-radius:8px;padding:10px 14px;margin:12px 0;font-size:12px;line-height:1.6;border-left:3px solid}
+  .co{border-color:#F59E0B;background:rgba(245,158,11,0.08);color:#8b92a5}
+  .cg{border-color:#22C364;background:rgba(34,195,100,0.08);color:#86efac}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- LOGO -->
+  <div class="logo">
+    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <lineargradient id="cb" x1=".5" x2=".5" y1="0" y2="1"><stop offset="0" stop-color="#11161b"></stop><stop offset="1" stop-color="#717171"></stop></lineargradient>
+        <lineargradient id="ct" x1="1" x2="0" y1=".167" y2=".833"><stop offset="0" stop-color="#0b2a1a"></stop><stop offset="1" stop-color="#22C364"></stop></lineargradient>
+      </defs>
+      <path d="M29.7 24L29.7 8L24.4 11.1L24.4 20.9L16 25.8L7.6 20.9L7.6 11.1L2.3 8L2.3 24L16 32Z" fill="url(#cb)"></path>
+      <path d="M29.7 8L24.4 4.9L16 9.8L7.6 4.9L2.3 8L16 16Z" fill="url(#ct)"></path>
+      <path d="M16 6.2L21.3 3.1L16 0L10.7 3.1Z" fill="#22C364"></path>
+    </svg>
+    <div class="logo-text">revo<span>zen</span></div>
+  </div>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>Diagnóstico para solución de Revenue Intelligence</h1>
+    <p class="header-desc">17 preguntas para entender tu proceso comercial y diseñar el sistema exacto que tu empresa necesita. Sin suposiciones.</p>
+    <div class="header-time">⏱ Tiempo estimado: 8–10 minutos</div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progress" style="width: 100%;"></div>
+  </div>
+  <div class="progress-label" id="progress-label">Diagnóstico completado</div>
+
+  <!-- ===================== SECCIÓN 1: EMPRESA ===================== -->
+  <div class="section active" id="s1">
+    <div class="section-header">
+      <div class="section-num">Sección 1 — Tu empresa</div>
+      <h2 class="section-title">Cuéntanos sobre el negocio</h2>
+      <p class="section-desc">Contexto básico para entender el tamaño y naturaleza de tu operación comercial.</p>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Nombre de la empresa y tu cargo<span class="q-required">*</span></label>
+      <input type="text" id="q_empresa" placeholder="Ej: ABC Seguros — VP Comercial">
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿En qué industria opera tu empresa?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_industria&#39;,&#39;Servicios financieros / seguros&#39;)">
+          <div class="option-dot"></div><div class="option-text">Servicios financieros / seguros</div>
+        </label>
+        <label class="option" onclick="selectOption(this,&#39;q_industria&#39;,&#39;Tecnología / SaaS B2B&#39;)">
+          <div class="option-dot"></div><div class="option-text">Tecnología / SaaS B2B</div>
+        </label>
+        <label class="option" onclick="selectOption(this,&#39;q_industria&#39;,&#39;Consultoría / servicios profesionales&#39;)">
+          <div class="option-dot"></div><div class="option-text">Consultoría / servicios profesionales</div>
+        </label>
+        <label class="option" onclick="selectOption(this,&#39;q_industria&#39;,&#39;Logística / supply chain&#39;)">
+          <div class="option-dot"></div><div class="option-text">Logística / supply chain</div>
+        </label>
+        <label class="option" onclick="selectOption(this,&#39;q_industria&#39;,&#39;Otra industria B2B&#39;)">
+          <div class="option-dot"></div><div class="option-text">Otra industria B2B</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuántos ejecutivos comerciales tiene tu equipo?<span class="q-required">*</span></label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,&#39;q_equipo&#39;,&#39;1-3&#39;)"><div class="option-dot"></div><div class="option-text">1–3 ejecutivos</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_equipo&#39;,&#39;4-6&#39;)"><div class="option-dot"></div><div class="option-text">4–6 ejecutivos</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_equipo&#39;,&#39;7-12&#39;)"><div class="option-dot"></div><div class="option-text">7–12 ejecutivos</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_equipo&#39;,&#39;13+&#39;)"><div class="option-dot"></div><div class="option-text">13 o más</div></label>
+      </div>
+    </div>
+
+    <div class="nav">
+      <div></div>
+      <button class="btn-next" onclick="nextSection(2)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SECCIÓN 2: PROCESO COMERCIAL ===================== -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">Sección 2 — Tu proceso comercial</div>
+      <h2 class="section-title">Cómo funciona hoy tu flujo comercial</h2>
+      <p class="section-desc">Queremos entender cómo gestionan los deals y qué tan consistente es el seguimiento actual.</p>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuántos deals nuevos gestiona en promedio un ejecutivo comercial por mes?<span class="q-required">*</span></label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,&#39;q_leads&#39;,&#39;&lt;30&#39;)"><div class="option-dot"></div><div class="option-text">Menos de 30</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_leads&#39;,&#39;30-100&#39;)"><div class="option-dot"></div><div class="option-text">30–100</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_leads&#39;,&#39;100-300&#39;)"><div class="option-dot"></div><div class="option-text">100–300</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_leads&#39;,&#39;300+&#39;)"><div class="option-dot"></div><div class="option-text">Más de 300</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuánto tiempo tarda tu equipo en responder a un lead nuevo?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_respuesta&#39;,&#39;&lt;30min&#39;)"><div class="option-dot"></div><div class="option-text">Menos de 30 minutos</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_respuesta&#39;,&#39;30min-2h&#39;)"><div class="option-dot"></div><div class="option-text">Entre 30 minutos y 2 horas</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_respuesta&#39;,&#39;2h-8h&#39;)"><div class="option-dot"></div><div class="option-text">Entre 2 y 8 horas</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_respuesta&#39;,&#39;&gt;8h&#39;)"><div class="option-dot"></div><div class="option-text">Más de 8 horas o al día siguiente</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuánto dura en promedio tu ciclo de venta (desde el primer contacto hasta el cierre)?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_ciclo&#39;,&#39;&lt;15dias&#39;)"><div class="option-dot"></div><div class="option-text">Menos de 15 días</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ciclo&#39;,&#39;15-30dias&#39;)"><div class="option-dot"></div><div class="option-text">15–30 días</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ciclo&#39;,&#39;30-90dias&#39;)"><div class="option-dot"></div><div class="option-text">30–90 días</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ciclo&#39;,&#39;&gt;90dias&#39;)"><div class="option-dot"></div><div class="option-text">Más de 90 días</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Qué % de los leads que entran reciben seguimiento consistente?</label>
+      <div class="range-val" id="seguimiento-val">50%</div>
+      <div class="range-wrap">
+        <input type="range" min="0" max="100" value="50" step="5" id="q_seguimiento" oninput="document.getElementById(&#39;seguimiento-val&#39;).textContent=this.value+&#39;%&#39;">
+        <div class="range-labels"><span>0%</span><span>50%</span><span>100%</span></div>
+      </div>
+    </div>
+
+
+    <div class="question">
+      <label class="q-label">¿Consideras que, como empresa, están perdiendo oportunidades de Cross-Selling por estar atendiendo urgencias o por alta dedicación en la captura de nuevos clientes?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,'q_crosssell','Si')"><div class="option-dot"></div><div class="option-text">Sí</div></label>
+        <label class="option" onclick="selectOption(this,'q_crosssell','No')"><div class="option-dot"></div><div class="option-text">No</div></label>
+        <label class="option" onclick="selectOption(this,'q_crosssell','Desconocido')"><div class="option-dot"></div><div class="option-text">Lo desconozco / No lo hemos analizado</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cómo definirías tu proceso de venta actual?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,'q_proceso','Caotico')"><div class="option-dot"></div><div class="option-text">Caótico</div></label>
+        <label class="option" onclick="selectOption(this,'q_proceso','Desordenado')"><div class="option-dot"></div><div class="option-text">Desordenado</div></label>
+        <label class="option" onclick="selectOption(this,'q_proceso','Algo desordenado')"><div class="option-dot"></div><div class="option-text">Algo desordenado</div></label>
+        <label class="option" onclick="selectOption(this,'q_proceso','Ordenado')"><div class="option-dot"></div><div class="option-text">Ordenado</div></label>
+        <label class="option" onclick="selectOption(this,'q_proceso','Muy ordenado')"><div class="option-dot"></div><div class="option-text">Muy ordenado</div></label>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn-back" onclick="prevSection(1)">← Volver</button>
+      <button class="btn-next" onclick="nextSection(3)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SECCIÓN 3: HERRAMIENTAS ===================== -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">Sección 3 — Herramientas y stack actual</div>
+      <h2 class="section-title">¿Con qué herramientas trabajas hoy?</h2>
+      <p class="section-desc">Esto determina cuánto tiempo toma la implementación y qué integraciones son necesarias.</p>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Qué CRM usa tu equipo actualmente?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_crm&#39;,&#39;HubSpot&#39;)"><div class="option-dot"></div><div class="option-text">HubSpot <div class="option-sub">Integración nativa — implementación más rápida</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_crm&#39;,&#39;Salesforce&#39;)"><div class="option-dot"></div><div class="option-text">Salesforce <div class="option-sub">Integración disponible — requiere configuración adicional</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_crm&#39;,&#39;Pipedrive/Zoho/Monday&#39;)"><div class="option-dot"></div><div class="option-text">Pipedrive / Zoho / Monday u otro <div class="option-sub">Integración via API — evaluamos caso a caso</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_crm&#39;,&#39;Excel/Sheets&#39;)"><div class="option-dot"></div><div class="option-text">Excel / Google Sheets <div class="option-sub">Sin CRM formal — incluimos HubSpot Starter en el setup</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_crm&#39;,&#39;Sin CRM&#39;)"><div class="option-dot"></div><div class="option-text">No usamos CRM <div class="option-sub">Implementamos HubSpot como parte del proyecto</div></div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Qué ecosistema de productividad usa tu empresa?<span class="q-required">*</span></label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,&#39;q_ecosistema&#39;,&#39;Google Workspace&#39;)"><div class="option-dot"></div><div class="option-text">Google Workspace<div class="option-sub">Gmail, Calendar, Drive</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ecosistema&#39;,&#39;Microsoft 365&#39;)"><div class="option-dot"></div><div class="option-text">Microsoft 365<div class="option-sub">Outlook, Teams, SharePoint</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ecosistema&#39;,&#39;Mixto&#39;)"><div class="option-dot"></div><div class="option-text">Mixto / ambos<div class="option-sub">Combinación de herramientas</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ecosistema&#39;,&#39;Otro&#39;)"><div class="option-dot"></div><div class="option-text">Otro</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Qué canal usan principalmente para comunicarse con leads y clientes?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="checkOption(this,&#39;q_canales&#39;,&#39;WhatsApp Business&#39;)"><div class="option-check"></div><div class="option-text">WhatsApp Business</div></label>
+        <label class="option" onclick="checkOption(this,&#39;q_canales&#39;,&#39;Email corporativo&#39;)"><div class="option-check"></div><div class="option-text">Email corporativo</div></label>
+        <label class="option" onclick="checkOption(this,&#39;q_canales&#39;,&#39;Llamadas telefónicas&#39;)"><div class="option-check"></div><div class="option-text">Llamadas telefónicas</div></label>
+        <label class="option" onclick="checkOption(this,&#39;q_canales&#39;,&#39;LinkedIn&#39;)"><div class="option-check"></div><div class="option-text">LinkedIn</div></label>
+        <label class="option" onclick="checkOption(this,&#39;q_canales&#39;,&#39;Videollamadas (Teams/Meet/Zoom)&#39;)"><div class="option-check"></div><div class="option-text">Videollamadas (Teams / Meet / Zoom)</div></label>
+      </div>
+      <span class="q-hint">Selecciona todos los que aplican</span>
+    </div>
+
+    <div class="nav">
+      <button class="btn-back" onclick="prevSection(2)">← Volver</button>
+      <button class="btn-next" onclick="nextSection(4)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SECCIÓN 4: OBJETIVOS ===================== -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">Sección 4 — Objetivos y prioridades</div>
+      <h2 class="section-title">Qué resultado esperas</h2>
+      <p class="section-desc">Esto define cómo mediremos el éxito del sistema y qué KPIs son los más relevantes para tu empresa.</p>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuál es el resultado más importante que esperas de Revozen?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_objetivo&#39;,&#39;Más reuniones agendadas con deals calificados&#39;)"><div class="option-dot"></div><div class="option-text">Más reuniones agendadas con deals calificados</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_objetivo&#39;,&#39;Reducir el ciclo de venta&#39;)"><div class="option-dot"></div><div class="option-text">Reducir el tiempo del ciclo de venta</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_objetivo&#39;,&#39;Que ningún deal quede sin seguimiento&#39;)"><div class="option-dot"></div><div class="option-text">Que ningún deal quede sin seguimiento</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_objetivo&#39;,&#39;Liberar tiempo del equipo comercial&#39;)"><div class="option-dot"></div><div class="option-text">Liberar tiempo del equipo para cerrar, no para administrar</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_objetivo&#39;,&#39;Revenue incremental medible&#39;)"><div class="option-dot"></div><div class="option-text">Revenue incremental atribuible al sistema</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿En qué plazo esperas ver resultados concretos?<span class="q-required">*</span></label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,&#39;q_plazo&#39;,&#39;Mes 1&#39;)"><div class="option-dot"></div><div class="option-text">Mes 1 <div class="option-sub">Primer ciclo completo</div></div></label>
+        <label class="option selected" onclick="selectOption(this,&#39;q_plazo&#39;,&#39;Mes 3&#39;)"><div class="option-dot"></div><div class="option-text">Mes 3 <div class="option-sub">Tendencia estabilizada</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_plazo&#39;,&#39;Mes 6&#39;)"><div class="option-dot"></div><div class="option-text">Mes 6 <div class="option-sub">Impacto en revenue real</div></div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuál es el ticket promedio de un contrato cerrado?<span class="q-required">*</span></label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,&#39;q_ticket&#39;,&#39;&lt;5K&#39;)"><div class="option-dot"></div><div class="option-text">Menos de $5,000 USD</div></label>
+        <label class="option selected" onclick="selectOption(this,&#39;q_ticket&#39;,&#39;5K-20K&#39;)"><div class="option-dot"></div><div class="option-text">$5,000–$20,000 USD</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ticket&#39;,&#39;20K-100K&#39;)"><div class="option-dot"></div><div class="option-text">$20,000–$100,000 USD</div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_ticket&#39;,&#39;&gt;100K&#39;)"><div class="option-dot"></div><div class="option-text">Más de $100,000 USD</div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuál es tu tasa de cierre actual (oportunidades de negocio que se convierten en clientes sobre el total de oportunidades)?</label>
+      <div class="options grid">
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','menos-5')"><div class="option-dot"></div><div class="option-text">Menos del 5%</div></label>
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','5-10')"><div class="option-dot"></div><div class="option-text">5% – 10%</div></label>
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','11-20')"><div class="option-dot"></div><div class="option-text">11% – 20%</div></label>
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','21-35')"><div class="option-dot"></div><div class="option-text">21% – 35%</div></label>
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','36-50')"><div class="option-dot"></div><div class="option-text">36% – 50%</div></label>
+        <label class="option" onclick="selectOption(this,'q_cierre_opt','mas-50')"><div class="option-dot"></div><div class="option-text">Más del 50%</div></label>
+      </div>
+      <div style="margin-top:10px">
+        <input type="text" id="q_cierre_otro" placeholder="Otro: ingresa tu tasa (ej: 42%)">
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="btn-back" onclick="prevSection(3)">← Volver</button>
+      <button class="btn-next" onclick="nextSection(5)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ===================== SECCIÓN 5: CONTEXTO FINAL ===================== -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">Sección 5 — Contexto adicional</div>
+      <h2 class="section-title">Últimas preguntas</h2>
+      <p class="section-desc">Para afinar la propuesta y entender tu situación de decisión.</p>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Tienen datos históricos de leads en su CRM o herramienta actual?<span class="q-required">*</span></label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,&#39;q_datos&#39;,&#39;Si, datos limpios y organizados&#39;)"><div class="option-dot"></div><div class="option-text">Sí, datos limpios y organizados <div class="option-sub">Podemos medir baseline desde el día 1</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_datos&#39;,&#39;Si pero desordenados&#39;)"><div class="option-dot"></div><div class="option-text">Sí, pero están desordenados <div class="option-sub">Necesitamos semana 0 de limpieza antes de implementar</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_datos&#39;,&#39;Pocos datos&#39;)"><div class="option-dot"></div><div class="option-text">Pocos datos históricos <div class="option-sub">Los primeros 60 días serán la línea de base</div></div></label>
+        <label class="option" onclick="selectOption(this,&#39;q_datos&#39;,&#39;Sin datos&#39;)"><div class="option-dot"></div><div class="option-text">No tenemos datos registrados <div class="option-sub">Partimos desde cero — implementamos el sistema de registro</div></div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Tienen restricciones especiales de IT o seguridad que deberíamos conocer?</label>
+      <div class="options">
+        <label class="option" onclick="selectOption(this,'q_it','No, somos flexibles')"><div class="option-dot"></div><div class="option-text">No, somos flexibles con herramientas externas siempre y cuando cumplan con los estándares de seguridad.</div></label>
+        <label class="option" onclick="selectOption(this,'q_it','IT estricto')"><div class="option-dot"></div><div class="option-text">Sí, tenemos restricciones especiales que exige nuestra área de TI.<div class="option-sub">Ejemplo: Se permiten solo herramientas del ecosistema Microsoft / Google</div></div></label>
+      </div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Cuál es tu nivel de urgencia para implementar esta solución?<span class="q-required">*</span></label>
+      <div class="scale" id="q_urgencia">
+        <div class="scale-btn" onclick="selectScale(&#39;q_urgencia&#39;,this,&#39;1&#39;)">1</div>
+        <div class="scale-btn" onclick="selectScale(&#39;q_urgencia&#39;,this,&#39;2&#39;)">2</div>
+        <div class="scale-btn" onclick="selectScale(&#39;q_urgencia&#39;,this,&#39;3&#39;)">3</div>
+        <div class="scale-btn" onclick="selectScale(&#39;q_urgencia&#39;,this,&#39;4&#39;)">4</div>
+        <div class="scale-btn" onclick="selectScale(&#39;q_urgencia&#39;,this,&#39;5&#39;)">5</div>
+      </div>
+      <div class="scale-labels"><span>Sin urgencia</span><span>Urgencia alta</span></div>
+    </div>
+
+    <div class="question">
+      <label class="q-label">¿Algo más que debamos saber sobre tu proceso o desafío comercial?</label>
+      <textarea id="q_adicional" placeholder="Contexto adicional, restricciones específicas, o lo que consideres relevante para la propuesta..."></textarea>
+    </div>
+
+    <div class="question">
+      <label class="q-label">Email para enviarte el resumen del diagnóstico<span class="q-required">*</span></label>
+      <input type="email" id="q_email" placeholder="tu@empresa.com">
+    </div>
+
+    <div class="nav">
+      <button class="btn-back" onclick="prevSection(4)">← Volver</button>
+      <button class="btn-next" onclick="showResult()">Ver mi diagnóstico →</button>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTADO ===================== -->
+  <div class="result" id="result">
+    <div class="result-header">
+      <div class="result-icon">✅</div>
+      <h2 class="result-title">Diagnóstico completado</h2>
+      <p class="result-desc">Basado en tus respuestas, este es el programa de Revenue Intelligence que Revozen diseñaría para tu empresa.</p>
+    </div>
+
+    <div class="plan-card" id="plan-result">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span style="background:#22C36422;color:#22C364;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid #22C36444">Plan recomendado</span>
+    </div>
+    <div style="font-size:13px;color:#8b92a5;margin-bottom:4px">Setup: $2,500 (único) · Retainer: $2,000/mes</div>
+    <div style="font-size:13px;color:#8b92a5;margin-bottom:16px">4 agentes completos</div>
+    <div style="font-size:12px;font-weight:600;color:#6b7a99;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Incluye</div>
+    <ul style="font-size:13px;color:#8b92a5;line-height:1.9;padding-left:16px">
+      <li>Integraciones CRM y canales utilizados (hasta 3)</li>
+      <li>Integración MS365 o Google Workspace</li>
+      <li>Generación de memoria comercial por Deal</li>
+      <li>Enriquecimiento contextual para incrementar Cross-Selling y renovaciones de contratos</li>
+      <li>Captura y análisis de emails</li>
+      <li>Recomendación mensaje contextual con lógicas de priorización por Deal en canal preferido para revisión / aprobación</li>
+      <li>Envío automático post-aprobación del ejecutivo comercial</li>
+      <li>Alertas internas (Teams / Slack)</li>
+      <li>Reporte Gerencial con KPIs de conversión e impacto en Revenue</li>
+    </ul>
+  </div>
+
+    <div class="insights" id="insights-result">
+  </div>
+
+    <div class="cta-box">
+      <p>Segundo paso:</p>
+      <button class="cta-btn" onclick="alert(&#39;En producción, este botón abrirá tu Cal.com&#39;)">Agendar Diagnóstico Paso 2 sin costo →</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// Estado del formulario
+const answers = {};
+const checkAnswers = {};
+let currentSection = 1;
+const totalSections = 5;
+
+// Selección radio
+function selectOption(el, field, value) {
+  const parent = el.closest('.options');
+  parent.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[field] = value;
+}
+
+// Selección checkbox
+function checkOption(el, field, value) {
+  el.classList.toggle('selected');
+  el.querySelector('.option-check').textContent = el.classList.contains('selected') ? '✓' : '';
+  if (!checkAnswers[field]) checkAnswers[field] = new Set();
+  if (el.classList.contains('selected')) checkAnswers[field].add(value);
+  else checkAnswers[field].delete(value);
+  answers[field] = Array.from(checkAnswers[field]).join(', ');
+}
+
+// Escala numérica
+function selectScale(field, el, value) {
+  const parent = el.closest('.scale');
+  parent.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  answers[field] = value;
+}
+
+// Navegación
+function validateSection(sNum) {
+  const section = document.getElementById('s' + sNum);
+  const required = section.querySelectorAll('.q-required');
+  let valid = true;
+  // Clear previous errors
+  section.querySelectorAll('.q-error').forEach(e => e.remove());
+  required.forEach(req => {
+    const q = req.closest('.question');
+    const label = req.closest('.q-label');
+    const fieldId = q.querySelector('[id]') ? q.querySelector('[id]').id : null;
+    let answered = false;
+    // Check radio/option selections
+    if (q.querySelector('.option.selected')) answered = true;
+    // Check text/email inputs
+    const input = q.querySelector('input[type="text"], input[type="email"], input[type="number"]');
+    if (input && input.value.trim()) answered = true;
+    // Check scale
+    if (q.querySelector('.scale-btn.selected')) answered = true;
+    if (!answered) {
+      valid = false;
+      const err = document.createElement('div');
+      err.className = 'q-error';
+      err.style.cssText = 'color:#F87171;font-size:12px;margin-top:6px;';
+      err.textContent = 'Este campo es obligatorio.';
+      q.appendChild(err);
+    }
+  });
+  return valid;
+}
+
+function nextSection(n) {
+  if (!validateSection(currentSection)) return;
+  document.getElementById('s' + currentSection).classList.remove('active');
+  document.getElementById('s' + n).classList.add('active');
+  currentSection = n;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function prevSection(n) {
+  document.getElementById('s' + currentSection).classList.remove('active');
+  document.getElementById('s' + n).classList.add('active');
+  currentSection = n;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress() {
+  const pct = ((currentSection - 1) / totalSections) * 100;
+  document.getElementById('progress').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = 'Sección ' + currentSection + ' de ' + totalSections;
+}
+
+// Calcular plan recomendado
+function calcPlan() {
+  const equipo = answers['q_equipo'] || '4-6';
+  const leads = answers['q_leads'] || '30-100';
+  const crm = answers['q_crm'] || 'Sin CRM';
+  const ciclo = answers['q_ciclo'] || '30-90dias';
+  const ticket = answers['q_ticket'] || '5K-20K';
+  const objetivo = answers['q_objetivo'] || '';
+  const datos = answers['q_datos'] || '';
+  const it = answers['q_it'] || '';
+  const urgencia = answers['q_urgencia'] || '3';
+  const seguimiento = parseInt(document.getElementById('q_seguimiento').value);
+  const cierre = 15; // valor referencial
+
+  let score = 0;
+
+  // Tamaño equipo
+  if (equipo === '1-3') score += 1;
+  else if (equipo === '4-6') score += 2;
+  else if (equipo === '7-12') score += 3;
+  else if (equipo === '13+') score += 4;
+
+  // Volumen leads
+  if (leads === '<30') score += 0;
+  else if (leads === '30-100') score += 1;
+  else if (leads === '100-300') score += 2;
+  else if (leads === '300+') score += 3;
+
+  // Ticket (mayor ticket = mayor plan)
+  if (ticket === '>100K') score += 2;
+  else if (ticket === '20K-100K') score += 1;
+
+  let plan, color, setup, retainer, agentes, incluye, warnings = [], insights = [];
+
+  // Casos especiales primero
+  const esTicketMuyAlto = ticket === '>100K';
+  const esVolumenMuyBajo = leads === '<30';
+  const esEquipoPequeno = equipo === '1-3';
+
+  if (esTicketMuyAlto && esVolumenMuyBajo) {
+    // Consultoría de alto valor — Revozen puede no convenir en su totalidad
+    plan = 'Enterprise — Implementación parcial recomendada';
+    color = '#9B7BF7';
+    setup = '$3,000–5,000';
+    retainer = 'Desde $2,000/mes';
+    agentes = 'Agentes de soporte interno (no comunicación directa con prospecto)';
+    incluye = ['Briefing pre-reunión automatizado', 'Alertas internas de seguimiento', 'Registro automático en CRM', 'Resumen post-reunión con Claude'];
+    insights.push({icon:'⚠️', text:'<strong>Atención:</strong> Con tickets mayores a $100K y bajo volumen de leads, automatizar la comunicación directa con el prospecto puede dañar la relación. Recomendamos que los agentes operen internamente — preparando al ejecutivo, no comunicándose con el cliente.'});
+    insights.push({icon:'🎯', text:'<strong>Mayor valor en tu caso:</strong> Briefing pre-reunión con research del prospecto + resumen automático post-reunión + alertas de seguimiento interno. Eso libera tiempo del ejecutivo sin riesgo de despersonalizar la venta.'});
+  } else if (esEquipoPequeno && esVolumenMuyBajo) {
+    plan = 'Starter — Validación primero';
+    color = '#7FC8FF';
+    setup = '$2,500';
+    retainer = '$1,200/mes';
+    agentes = 'Agente 1 (captura y calificación)';
+    incluye = ['Respuesta automática a leads en <5 min', 'Calificación con 2–3 preguntas', 'Agendamiento automático', 'HubSpot Starter incluido'];
+    insights.push({icon:'💡', text:'<strong>Recomendación honesta:</strong> Con un equipo de 1–3 personas y menos de 30 leads/mes, el ROI de un sistema completo es difícil de justificar. El Agente 1 solo ya puede generar impacto medible. Si en 90 días el sistema demuestra valor, escalamos.'});
+    insights.push({icon:'📊', text:'<strong>KPI clave mes 1:</strong> Tasa de respuesta en <5 minutos (baseline actual probablemente >2 horas). Con 20–30 leads/mes a ticket de ' + ticket + ', incluso un 10% de mejora en conversión tiene impacto claro.'});
+  } else if (score <= 2) {
+    plan = 'Starter';
+    color = '#22C364';
+    setup = '$2,500';
+    retainer = '$1,500/mes';
+    agentes = 'Agentes 1 y 2 (captura, calificación y seguimiento)';
+    incluye = ['Respuesta automática en <5 min', 'Calificación de leads', 'Seguimiento autónomo multicanal', 'HubSpot Starter incluido', 'Email + WhatsApp', 'Reportes mensuales'];
+  } else if (score <= 5) {
+    plan = 'Growth';
+    color = '#7FC8FF';
+    setup = '$4,000';
+    retainer = '$2,500/mes';
+    agentes = '4 agentes completos';
+    incluye = ['Todo Starter', 'Enriquecimiento con Apollo.io', 'Briefing pre-reunión automático', 'Captura y análisis de emails', 'Alertas internas (Teams / Slack)', 'Integración MS365 o Google Workspace', 'Reportes con KPIs de conversión'];
+  } else {
+    plan = 'Growth / Enterprise';
+    color = '#9B7BF7';
+    setup = '$4,000–6,000';
+    retainer = '$2,500–4,000/mes';
+    agentes = '4–6+ agentes según necesidad';
+    incluye = ['Todo Growth', 'Research dinámico de prospectos', 'Transcripción y análisis de reuniones', 'Integración profunda MS365 / Google', 'SLA de soporte', 'Propuesta consultiva personalizada'];
+    insights.push({icon:'📋', text:'<strong>Por tu tamaño de equipo y volumen:</strong> Necesitamos una sesión de diagnóstico antes de definir el plan exacto. El Enterprise se configura a medida.'});
+  }
+
+  // Insights adicionales según respuestas
+  if (seguimiento < 60) {
+    insights.push({icon:'🚨', text:'<strong>Punto crítico detectado:</strong> Solo el ' + seguimiento + '% de tus leads recibe seguimiento consistente. Ese gap es recuperable revenue. El Agente 2 de seguimiento autónomo puede llevar ese número al 100% desde la semana 1.'});
+  }
+
+  if (crm === 'Sin CRM' || crm === 'Excel/Sheets') {
+    warnings.push({icon:'⚙️', text:'<strong>Sin CRM formal:</strong> Incluimos la implementación de HubSpot Starter como parte del setup. Esto agrega 3–5 días al tiempo de implementación.'});
+  }
+
+  if (crm === 'HubSpot') {
+    insights.push({icon:'✅', text:'<strong>Ya tienes HubSpot:</strong> La implementación es más rápida — conectamos directamente sobre tu instancia actual. El sistema puede estar activo en 2 semanas.'});
+  }
+
+  if (datos === 'Si, datos limpios y organizados') {
+    insights.push({icon:'📊', text:'<strong>Datos históricos disponibles:</strong> Podemos capturar el baseline completo en la semana 0 y medir el impacto del sistema desde el mes 1 con rigor.'});
+  } else if (datos === 'Sin datos' || datos === 'Pocos datos') {
+    warnings.push({icon:'⚠️', text:'<strong>Sin datos históricos:</strong> Los primeros 60 días del sistema serán la línea de base. No podremos medir impacto comparativo hasta el mes 3.'});
+  }
+
+  if (it === 'IT estricto' || it === 'Solo Microsoft') {
+    warnings.push({icon:'🔒', text:'<strong>Restricciones de IT:</strong> Evaluaremos el uso de Power Automate en lugar de n8n para cumplir con las políticas de seguridad. Esto puede extender el tiempo de implementación 1–2 semanas adicionales.'});
+  }
+
+  if (urgencia >= '4') {
+    insights.push({icon:'⚡', text:'<strong>Alta urgencia detectada:</strong> Con tu ecosistema y datos actuales, podemos tener el Agente 1 activo en 1 semana y el sistema completo en 3 semanas.'});
+  }
+
+  // Pipeline incremental estimado
+  const ticketNum = {'<5K':3000,'5K-20K':12500,'20K-100K':60000,'>100K':150000}[ticket] || 12500;
+  const leadsNum = {'<30':20,'30-100':65,'100-300':200,'300+':350}[leads] || 65;
+  const mejoraMeetings = 0.25; // 25% mejora estimada en lead→reunión
+  const extraMeetings = Math.round(leadsNum * mejoraMeetings);
+  const pipeline = Math.round(extraMeetings * ticketNum * (cierre/100));
+  if (pipeline > 0) {
+    insights.push({icon:'💰', text:'<strong>Pipeline incremental estimado mes 1:</strong> Con ' + extraMeetings + ' reuniones adicionales proyectadas × ticket $' + ticketNum.toLocaleString() + ' × ' + cierre + '% tasa de cierre = <strong>~$' + pipeline.toLocaleString() + ' USD</strong> de pipeline incremental. (Estimación conservadora basada en benchmarks de industria — no garantizada.)'});
+  }
+
+  return {plan, color, setup, retainer, agentes, incluye, insights, warnings};
+}
+
+function showResult() {
+  if (!validateSection(currentSection)) return;
+  // Capturar respuestas de inputs
+  answers['q_seguimiento'] = document.getElementById('q_seguimiento').value + '%';
+  answers['q_cierre'] = answers['q_cierre_opt'] || document.getElementById('q_cierre_otro').value || 'No especificado';
+  answers['q_adicional'] = document.getElementById('q_adicional').value;
+  answers['q_email'] = document.getElementById('q_email').value;
+  answers['q_empresa'] = document.getElementById('q_empresa').value;
+
+  const r = calcPlan();
+
+  // Render plan
+  document.getElementById('plan-result').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span style="background:#22C36422;color:#22C364;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px;border:1px solid #22C36444">Plan recomendado</span>
+    </div>
+    <div style="font-size:13px;color:#8b92a5;margin-bottom:4px">Setup: $2,500 (único) · Retainer: $2,000/mes</div>
+    <div style="font-size:13px;color:#8b92a5;margin-bottom:16px">4 agentes completos</div>
+    <div style="font-size:12px;font-weight:600;color:#6b7a99;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Incluye</div>
+    <ul style="font-size:13px;color:#8b92a5;line-height:1.9;padding-left:16px">
+      <li>Integraciones CRM y canales utilizados (hasta 3)</li>
+      <li>Integración MS365 o Google Workspace</li>
+      <li>Generación de memoria comercial por Deal</li>
+      <li>Enriquecimiento contextual para incrementar Cross-Selling y renovaciones de contratos</li>
+      <li>Captura y análisis de emails</li>
+      <li>Recomendación mensaje contextual con lógicas de priorización por Deal en canal preferido para revisión / aprobación</li>
+      <li>Envío automático post-aprobación del ejecutivo comercial</li>
+      <li>Alertas internas (Teams / Slack)</li>
+      <li>Reporte Gerencial con KPIs de conversión e impacto en Revenue</li>
+    </ul>
+  `;
+
+  // Render insights y warnings
+  let insightsHTML = '';
+  if (r.warnings.length > 0) {
+    r.warnings.forEach(w => {
+      insightsHTML += `<div class="insight-item"><span class="insight-icon">${w.icon}</span><div class="insight-text">${w.text}</div></div>`;
+    });
+  }
+  r.insights.forEach(i => {
+    insightsHTML += `<div class="insight-item"><span class="insight-icon">${i.icon}</span><div class="insight-text">${i.text}</div></div>`;
+  });
+
+  document.getElementById('insights-result').innerHTML = insightsHTML ? `
+    <div style="font-size:11px;font-weight:600;color:#6b7a99;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Hallazgos del diagnóstico</div>
+    ${insightsHTML}
+  ` : '';
+
+  // Mostrar resultado
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('result').classList.add('active');
+  document.getElementById('progress').style.width = '100%';
+  document.getElementById('progress-label').textContent = 'Diagnóstico completado';
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+</script>
+
+
+</body></html>
