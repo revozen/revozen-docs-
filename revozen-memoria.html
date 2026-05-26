@@ -174,10 +174,17 @@
   }
 
   /* Mobile */
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .header-badge { display: none; }
+  }
+
+  @media (max-width: 520px) {
     .card { padding: 20px 16px 24px; }
     .features-grid { grid-template-columns: 1fr; }
-    .header-badge { display: none; }
+    .header-sub { margin-left: 0; margin-top: 6px; }
+    .deal-card { flex-wrap: wrap; }
+    .deal-status { margin-top: 4px; }
   }
 </style>
 </head>
