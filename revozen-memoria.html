@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revozen — Memoria Comercial</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: transparent;
+    margin: 0;
+    padding: 0;
+  }
+
+  .card {
+    background: transparent;
+    padding: 28px 32px 32px;
+    width: 100%;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .header-icon {
+    width: 32px;
+    height: 32px;
+    background: #111;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111;
+  }
+  .header-badge {
+    font-size: 13px;
+    color: #666;
+    margin-left: 4px;
+    font-weight: 400;
+  }
+  .header-sub {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 20px;
+    margin-left: 42px;
+  }
+
+  /* Deal card at top */
+  .deal-card {
+    background: #f5f5f7;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .deal-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #4f7cff22, #4f7cff44);
+    border: 1.5px solid #4f7cff33;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4f7cff;
+    flex-shrink: 0;
+  }
+  .deal-info { flex: 1; }
+  .deal-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 2px;
+  }
+  .deal-meta {
+    font-size: 11px;
+    color: #888;
+  }
+  .deal-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #e6f9f0;
+    color: #22a05a;
+    border: 1px solid #b6ecd4;
+  }
+
+  /* Features grid */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .feature-card {
+    background: #f5f5f7;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .feature-card:hover { background: #eeeff3; }
+
+  .feature-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .fi-blue   { background: #e8eeff; }
+  .fi-green  { background: #e6f9f0; }
+  .fi-orange { background: #fff3e6; }
+  .fi-purple { background: #f0eaff; }
+
+  .feature-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111;
+    line-height: 1.3;
+  }
+  .feature-desc {
+    font-size: 11px;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  /* Bottom security bar */
+  .security-bar {
+    background: #f5f5f7;
+    border-radius: 10px;
+    padding: 11px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .security-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c364;
+    flex-shrink: 0;
+    box-shadow: 0 0 0 3px #22c36420;
+  }
+  .security-text {
+    font-size: 11px;
+    color: #555;
+    font-weight: 500;
+  }
+  .security-text strong {
+    color: #111;
+    font-weight: 600;
+  }
+
+  /* Mobile */
+  @media (max-width: 480px) {
+    .card { padding: 20px 16px 24px; }
+    .features-grid { grid-template-columns: 1fr; }
+    .header-badge { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M9 2L3 5v4c0 3.5 2.5 6.5 6 7.5C13.5 15.5 16 12.5 16 9V5L9 2z" fill="white" fill-opacity="0.15" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M6.5 9l2 2 3-3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <span class="header-title">Memoria Comercial</span>
+    <span class="header-badge">por deal</span>
+  </div>
+  <div class="header-sub">Contexto acumulado de cada oportunidad — disponible en cada interacción</div>
+
+  <!-- 4 features -->
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <div class="feature-icon fi-blue">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <rect x="2" y="3" width="14" height="11" rx="2" stroke="#4f7cff" stroke-width="1.3" fill="#4f7cff" fill-opacity=".08"/>
+          <path d="M5 7h8M5 10h5" stroke="#4f7cff" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="feature-title">Enriquecimiento por deal</div>
+      <div class="feature-desc">Captura emails, llamadas y contexto del CRM. Cada deal acumula su propia memoria.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon fi-green">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2L3 5v4c0 3.3 2.3 6.1 6 7.2C13.7 15.1 16 12.3 16 9V5L9 2z" fill="#22c364" fill-opacity=".1" stroke="#22c364" stroke-width="1.3"/>
+          <path d="M6.5 9l2 2 3-3" stroke="#22c364" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="feature-title">Entorno seguro del cliente</div>
+      <div class="feature-desc">La memoria vive en la instancia dedicada del cliente. Revozen no accede ni retiene los datos.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon fi-orange">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M9 2v14M4 7l5-5 5 5" stroke="#f59e0b" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 12h10" stroke="#f59e0b" stroke-width="1.3" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="feature-title">Activo estratégico</div>
+      <div class="feature-desc">El conocimiento no se va con el ejecutivo. La empresa retiene el contexto aunque rote el equipo.</div>
+    </div>
+
+    <div class="feature-card">
+      <div class="feature-icon fi-purple">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="9" cy="9" r="6.5" stroke="#9b7bf7" stroke-width="1.3" fill="#9b7bf7" fill-opacity=".08"/>
+          <path d="M6 9l2 2 4-4" stroke="#9b7bf7" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="feature-title">Contexto en cada mensaje</div>
+      <div class="feature-desc">Cada recomendación de seguimiento se genera sobre la memoria real del deal, no desde cero.</div>
+    </div>
+
+  </div>
+
+  <!-- Security bar -->
+  <div class="security-bar">
+    <div class="security-dot"></div>
+    <div class="security-text"><strong>Propiedad del cliente.</strong> La memoria comercial es un activo de la empresa — no de Revozen.</div>
+  </div>
+
+</div>
+</body>
+</html>
